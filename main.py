@@ -34,6 +34,9 @@ nColors = len(colorPalette)
 screenWidth = 500
 screenHeight = 500
 
+gameWidth = 500
+gameHeight = 500
+
 gameMidX = screenWidth / 2
 gameMidY = screenHeight / 2
 
@@ -43,6 +46,41 @@ nAsteroids = 20
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
+
+
+class camera:
+    
+  def __init__(self, x, y, width, height):
+      self.topLeftX = x
+      self.topLeftY = y
+      self.width = width
+      self.height = height
+      self.halfW = width / 2
+      self.halfH = height / 2
+      
+  
+  def moveCam(self, speed, heading):
+      radAng = deg2Rad(heading)
+      self.topLeftX += speed * math.cos(radAng)
+      self.topLeftY += speed * math.sin(radAng)
+      # If ship goes out of screen, wrap it other side.
+      if (self.topLeftX < 0):
+        self.topLeftX = gameWidth - 1
+      elif (self.topLeftX > gameWidth):
+        self.topLeftX = 0
+    
+      return
+      
+  def alignCam(self, objX, objY):
+      if self.halfW < objX:
+          self.topLeftX += 1
+      elif self.halfW > objX:
+          self.topLeftX -= 1
+      
+      if self.halfH < objY:
+          self.topLeftY += 1
+      elif self.halfH > objY:
+          self.topLeftY -= 1
 
 
 def asteroidMe():
