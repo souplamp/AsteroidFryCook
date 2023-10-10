@@ -33,9 +33,9 @@ nRockTypes = len(spaceRocks)
 
 class spaceRock:
 
-  def __init__(self, screenWidth, screenHeight):
-    self.x = random.randint(0, screenWidth - 1)
-    self.y = random.randint(0, screenHeight - 1)
+  def __init__(self, gameWidth, gameHeight):
+    self.x = random.randint(0, gameWidth - 1)
+    self.y = random.randint(0, gameHeight - 1)
     self.heading = random.randint(0, 359)
     self.xVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
@@ -45,8 +45,8 @@ class spaceRock:
     self.myPoints = spaceRocks[index]
 
     # This is passed from main
-    self.screenWidth = screenWidth
-    self.screenHeight = screenHeight
+    self.screenWidth = gameWidth
+    self.screenHeight = gameHeight
 
     # Find center of rotation.
     xSum = ySum = 0
@@ -80,6 +80,7 @@ class spaceRock:
     self.color = colorPalette[index]
 
     self.isActive = True
+  
 
   def moveMe(self):
 
