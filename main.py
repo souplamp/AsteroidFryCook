@@ -42,7 +42,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 
-nAsteroids = 80
+nAsteroids = 500
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]

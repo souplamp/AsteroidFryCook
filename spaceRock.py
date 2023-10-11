@@ -19,15 +19,6 @@ nColors = len(colorPalette)
 # Space rock variables.
 maxRockVelocity = 2
 maxRockScaleFactor = 40
-maxRockTypes = 3
-
-rock0 = [[[1, 1], [1, -1], [-1, -1], [-1, 1], [1, 1]]]
-rock1 = [[[1, 2], [3, 1], [3, -1], [1, -2], [-1, -2], [-3, -1], [-3, 1],
-          [-1, 2], [1, 2]]]
-rock2 = [[[1, 1], [1, 0], [1, -1], [-2, -1], [-2, 1], [1, 1]]]
-
-spaceRocks = rock0 + rock1 + rock2
-nRockTypes = len(spaceRocks)
 
 
 
@@ -41,40 +32,14 @@ class spaceRock:
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.scaleFactorX = random.randint(1, maxRockScaleFactor)
     self.scaleFactorY = random.randint(1, maxRockScaleFactor)
-    index = random.randint(0, nRockTypes - 1)
-    self.myPoints = spaceRocks[index]
+
+    # rock image
+    self.image = p.image.load("./sprites/rocks/rock0.png")
+    #self.image = p.transform.scale(self.image, (self.image.get_width() * self.scaleFactorX, self.image.get_height() * self.scaleFactorY))
 
     # This is passed from main
     self.screenWidth = gameWidth
     self.screenHeight = gameHeight
-
-    # Find center of rotation.
-    xSum = ySum = 0
-    for myPoint in self.myPoints:
-      xSum = xSum + myPoint[0]
-      ySum = ySum + myPoint[1]
-
-    self.xc = xSum / len(self.myPoints)
-    self.yc = ySum / len(self.myPoints)
-
-    # Find a bounding box for this asteroid.
-    xs = []
-    ys = []
-    for myPoint in self.myPoints:
-      x = myPoint[0]
-      y = myPoint[1]
-
-      # Rotate and scale these points.
-      xr, yr = rotatePoint(self.xc, self.yc, x, y, self.heading)
-      xScale = xr * self.scaleFactorX
-      yScale = yr * self.scaleFactorY
-      xs.append(xScale)
-      ys.append(yScale)
-
-    self.minX = min(xs)
-    self.maxX = max(xs)
-    self.minY = min(ys)
-    self.maxY = max(ys)
 
     index = random.randint(0, nColors - 1)
     self.color = colorPalette[index]
@@ -120,39 +85,17 @@ class spaceRock:
 
   def drawMe(self, screen):
     if (self.isActive):
-      points = []
-      for myPoint in self.myPoints:
-        # Get coords of point.
-        x0 = float(myPoint[0])
-        y0 = float(myPoint[1])
+      
+      screen.blit(self.image, p.Rect(self.x, self.y, 32, 22))
 
-        # Rotate the point.
-        myRadius = getDist(self.xc, self.yc, x0, y0)
-        theta = math.atan2(y0 - self.yc, x0 - self.xc)
-        radAng = deg2Rad(self.heading)
-        xr = self.xc + myRadius * math.cos(radAng + theta)
-        yr = self.yc + myRadius * math.sin(radAng + theta)
-
-        # Scale.
-        xs = xr * self.scaleFactorX
-        ys = yr * self.scaleFactorY
-
-        # Translate.
-        xt = xs + self.x
-        yt = ys + self.y
-
-        # Put point into polygon point list.
-        points.append([xt, yt])
-
-      p.draw.polygon(screen, self.color, points, width=2)
     return
 
   def checkCollision(self, x, y):
     smack = False
 
     # i turned these into one check :)
-    x_min_check = ((x >= self.minX + self.x) and (x <= self.maxX + self.x))
-    y_min_check = ((y >= self.minY + self.y) and (y <= self.maxY + self.y))
+    x_min_check = ((x >= self.x) and (x <= self.x + self.image.get_width()))
+    y_min_check = ((y >= self.y) and (y <= self.y + self.image.get_height()))
 
     if x_min_check and y_min_check:
       smack = True
