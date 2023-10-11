@@ -50,6 +50,13 @@ basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
 # append game objects to this list whenever they're instantiated, used for camera offset function to have the camera work
 entities = []
 
+class star:
+  def __init__(self, x, y):
+    self.x = x
+    self.y = y
+
+  def drawMe(self, screen):
+    p.draw.circle(screen, WHITE, (self.x, self.y), 1)
 
 class camera:
     
@@ -69,30 +76,21 @@ class camera:
     incY = (speed * math.sin(radAng))
     self.topLeftX += incX
     self.topLeftY += incY
-
-    # If ship goes out of screen, wrap it other side.
-    """
-    if (self.topLeftX < 0):
-      self.topLeftX = gameWidth - 1
-    elif (self.topLeftX > gameWidth):
-      self.topLeftX = 0
-    """
   
     return incX, incY
 
   # offset object positions. One method for single objects, one method for a list of them
   # called by moveCam
-  def offsetObjects(self, obj, incX, incY):
+  def offsetObjects(self, obj, incX, incY, divider=1):
 
     if type(obj) == list:
       for o in obj:
-        o.x -= incX
-        o.y -= incY
+        o.x -= incX * divider
+        o.y -= incY * divider
     
     else:
-      obj.x -= incX
-      obj.y -= incY
-
+        o.x -= incX * divider
+        o.y -= incY * divider
 
 def asteroidMe():
   # Initialize pygame.
@@ -137,6 +135,11 @@ def asteroidMe():
 
   # Clock/game frame things.
   tickTock = 0
+  
+  stars = []
+
+  for i in range(100):
+    stars.append(star(random.randint(0, gameWidth), random.randint(0, gameHeight)))
 
   # -------- Main Program Loop -----------
   while running:
@@ -157,6 +160,8 @@ def asteroidMe():
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
+      for s in stars:
+        c.offsetObjects(s, incX, incY, 0.9)
 
     if (key[p.K_s] == True):
       #ship.moveMe(-1 * shipSpeed)
@@ -164,6 +169,8 @@ def asteroidMe():
       
       for e in entities:
         c.offsetObjects(e, incX, incY)
+      for s in stars:
+        c.offsetObjects(s, incX, incY, 0.9)
 
     if (key[p.K_a] == True):
       ship.turn(-3)
@@ -214,6 +221,9 @@ def asteroidMe():
     # --- Drawing code should go here
     # Spaceship
     ship.drawMe(screen, ORANGE, basicShip)
+    
+    for s in stars:
+      p.draw.circle(screen, WHITE, [s.x, s.y], 2)
 
     # Bullets
     for b in bullets:
