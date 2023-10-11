@@ -18,24 +18,29 @@ nColors = len(colorPalette)
 
 # Space rock variables.
 maxRockVelocity = 2
-maxRockScaleFactor = 40
+maxRockScaleFactor = 3
 
 
 
-class spaceRock:
+class spaceRock(p.sprite.Sprite):
 
   def __init__(self, gameWidth, gameHeight):
+    super().__init__()
+
     self.x = random.randint(0, gameWidth - 1)
     self.y = random.randint(0, gameHeight - 1)
     self.heading = random.randint(0, 359)
     self.xVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
-    self.scaleFactorX = random.randint(1, maxRockScaleFactor)
-    self.scaleFactorY = random.randint(1, maxRockScaleFactor)
+    self.scaleFactorX = random.randint(2, maxRockScaleFactor)
+    self.scaleFactorY = random.randint(2, maxRockScaleFactor)
 
     # rock image
-    self.image = p.image.load("./sprites/rocks/rock0.png")
-    #self.image = p.transform.scale(self.image, (self.image.get_width() * self.scaleFactorX, self.image.get_height() * self.scaleFactorY))
+    self.image = p.image.load("./sprites/rocks/rock0.png").convert_alpha()
+    #self.image = p.transform.scale(self.image, (self.image.get_width() * 2, self.image.get_height() * 2))
+
+    # rect obj for sprite
+    self.rect = self.image.get_rect()
 
     # This is passed from main
     self.screenWidth = gameWidth
@@ -63,6 +68,9 @@ class spaceRock:
       self.y = self.screenHeight - 1
     elif (self.y > self.screenHeight):
       self.y = 0
+    
+    self.rect.x = self.x
+    self.rect.y = self.y
 
     return
 
@@ -86,6 +94,9 @@ class spaceRock:
   def drawMe(self, screen):
     if (self.isActive):
       
+      colorImage = p.Surface(self.image.get_size()).convert_alpha()
+      colorImage.fill(self.color)
+      self.image.blit(colorImage, (0,0), special_flags = p.BLEND_RGBA_MULT)
       screen.blit(self.image, p.Rect(self.x, self.y, 32, 22))
 
     return
@@ -101,3 +112,7 @@ class spaceRock:
       smack = True
 
     return smack
+  
+  def reverseDir(self):
+    self.xVel = -self.xVel
+    self.yVel = -self.yVel

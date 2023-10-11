@@ -42,7 +42,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 
-nAsteroids = 500
+nAsteroids = 150
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -84,7 +84,7 @@ class camera:
   # called by moveCam
   def offsetObjects(self, obj, incX, incY):
 
-    if type(obj) == list:
+    if type(obj) == list or type(obj) == set:
       for o in obj:
         o.x -= incX
         o.y -= incY
@@ -131,9 +131,14 @@ def asteroidMe():
   shotCount = 0
 
   # Make some asteroids - that is space rocks.
-  myAsteroids = []
+  myAsteroids = set()
+  # sprite group, use in collisions
+  astGroup = p.sprite.Group()
+
   for j in range(nAsteroids):
-    myAsteroids.append(spaceRock(gameWidth, gameHeight))
+    newAst = spaceRock(gameWidth, gameHeight)
+    myAsteroids.add(newAst)
+    astGroup.add(newAst)
 
   # Clock/game frame things.
   tickTock = 0
@@ -193,6 +198,14 @@ def asteroidMe():
     for a in myAsteroids:
       a.moveMe()
 
+      # collisions
+      for aa in myAsteroids:
+        if (a != aa):
+          if p.sprite.collide_rect(a, aa):
+            a.reverseDir()
+            aa.reverseDir()
+
+
     # Check to see if a bullet hit an asteroid.
     for a in myAsteroids:
       for b in bullets:
@@ -222,6 +235,7 @@ def asteroidMe():
     # Asteroids
     for a in myAsteroids:
       a.drawMe(screen)
+      
      
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
