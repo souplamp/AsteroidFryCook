@@ -42,57 +42,56 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 
-nAsteroids = 20
+nAsteroids = 80
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
-"""
-in the future: add camera movement if possible!
+
+# append game objects to this list whenever they're instantiated, used for camera offset function to have the camera work
+entities = []
+
 
 class camera:
-
+    
   def __init__(self, x, y, width, height):
     self.topLeftX = x
     self.topLeftY = y
     self.width = width
-    self.height = height  
+    self.height = height
     self.halfW = width / 2
     self.halfH = height / 2
-
+      
+  
   def moveCam(self, speed, heading):
     radAng = deg2Rad(heading)
-    self.topLeftX += speed * math.cos(radAng)
-    self.topLeftY += speed * math.sin(radAng)
+
+    incX = (speed * math.cos(radAng))
+    incY = (speed * math.sin(radAng))
+    self.topLeftX += incX
+    self.topLeftY += incY
+
     # If ship goes out of screen, wrap it other side.
+    """
     if (self.topLeftX < 0):
       self.topLeftX = gameWidth - 1
     elif (self.topLeftX > gameWidth):
       self.topLeftX = 0
+    """
+  
+    return incX, incY
 
-    return
-  # This might break things
-  def moveCamSide(self, speed, heading):
-    radAng = deg2Rad(heading)
-    self.topLeftX += speed * math.cos(radAng-180)
-    self.topLeftY += speed * math.sin(radAng-180)
-    # If ship goes out of screen, wrap it other side.
-    if (self.topLeftX < 0):
-      self.topLeftX = gameWidth - 1
-    elif (self.topLeftX > gameWidth):
-      self.topLeftX = 0
+  # offset object positions. One method for single objects, one method for a list of them
+  # called by moveCam
+  def offsetObjects(self, obj, incX, incY):
 
-    return
-  def alignCam(self, objX, objY):
-    if self.halfW < objX:
-      self.topLeftX += 1
-    elif self.halfW > objX:
-      self.topLeftX -= 1
-
-    if self.halfH < objY:
-      self.topLeftY += 1
-    elif self.halfH > objY:
-      self.topLeftY -= 1
-"""
+    if type(obj) == list:
+      for o in obj:
+        o.x -= incX
+        o.y -= incY
+    
+    else:
+      obj.x -= incX
+      obj.y -= incY
 
 
 def asteroidMe():
@@ -113,18 +112,16 @@ def asteroidMe():
 
   # Used to manage how fast the screen updates
   clock = p.time.Clock()
-
+  
   # camera object
-  # TODO: add back later
-  #c = camera(0, 0, screenWidth, screenHeight)
+  c = camera(0, 0, screenWidth, screenHeight)
 
   # Set up some game objects.
   # Space ship stuff.
   initialHeading = 90
   scaleFactor = 6
-  ship = spaceShip(gameMidX, gameMidY, initialHeading, scaleFactor, basicShip,
-                   gameWidth, gameHeight)
-  shipSpeed = 3
+  ship = spaceShip(gameMidX, gameMidY, initialHeading, scaleFactor, basicShip, gameWidth, gameHeight)
+  shipSpeed = 5
   ship.setGunSpot([6, 0])
 
   # Bullet stuff
@@ -151,33 +148,44 @@ def asteroidMe():
     key = p.key.get_pressed()
 
     # Handle keypresses.
-    if (key[p.K_ESCAPE] == True):  
+    if (key[p.K_ESCAPE] == True):
       running = False
+
     if (key[p.K_w] == True):
-      ship.moveMe(shipSpeed)
+      #ship.moveMe(shipSpeed)
+      incX, incY = c.moveCam(shipSpeed, ship.heading)
+
+      for e in entities:
+        c.offsetObjects(e, incX, incY)
+
     if (key[p.K_s] == True):
-      ship.moveMe(-1 * shipSpeed)
-    if (key[p.K_LEFT] == True):
-      ship.turn(-2)
+      #ship.moveMe(-1 * shipSpeed)
+      incX, incY = c.moveCam(-1 * shipSpeed, ship.heading)
+      
+      for e in entities:
+        c.offsetObjects(e, incX, incY)
+
     if (key[p.K_a] == True):
-      ship.turn(-2)
+      ship.turn(-3)
+
     if (key[p.K_d] == True):
-      ship.turn(2)
+      ship.turn(3)
+
     if (key[p.K_LSHIFT] == True):
       print("Shield is Active(WIP)")
+
     if (key[p.K_SPACE] == True):
       if (shotCount == 0):
         gunX, gunY = ship.getGunSpot()
-        myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed,
-                          gameWidth, gameHeight)
+        myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed, gameWidth, gameHeight)
         bullets.append(myBullet)
         shotCount = maxShootingDelay
-
+        
+        
     # --- Game logic should go here
-
+    
     # camera function
-    #ship.camUpdate(0, 0, c)
-
+    
     # Move bullets and asteroids.
     for b in bullets:
       b.moveMe()
@@ -214,9 +222,9 @@ def asteroidMe():
     # Asteroids
     for a in myAsteroids:
       a.drawMe(screen)
-
+     
     # remove later
-    p.draw.rect(screen, GREEN, p.Rect(0, 0, gameWidth, gameHeight), width=2)
+    p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()
@@ -233,6 +241,13 @@ def asteroidMe():
     # Do some book keeping on arrays.
     # Remove inactive elements of bullets array.
     # Remove inactive elements of asteroids array.
+
+    # replace objects in entities list
+    entities.clear()
+    # we don't want the ship in the list, else it will not stay centered
+    # entities.append(ship)
+    entities.append(myAsteroids)
+    entities.append(bullets)
 
   # Close the window and quit.
   p.quit()

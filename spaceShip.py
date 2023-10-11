@@ -41,15 +41,7 @@ class spaceShip:
       self.gunY = 0
     
       return
-  
-    # update position in game camera before other collision etc. functions in game logic
-    def camUpdate(self, gameWidth, gameHeight, camera):
-        
-        print("camera: \n", camera.topLeftX, camera.topLeftY, "\nship: \n", self.x, self.y)
-        
-        self.x = camera.topLeftX
-        self.y = camera.topLeftY
-    
+
     def setGunSpot(self, gunSpot):
       self.gunSpot = gunSpot
       return
