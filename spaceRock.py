@@ -15,36 +15,61 @@ MAGENTA = (255, 0, 255)
 colorPalette = [WHITE, GREEN, RED, ORANGE, YELLOW, CYAN, MAGENTA]
 nColors = len(colorPalette)
 
-
 # Space rock variables.
 maxRockVelocity = 2
-maxRockScaleFactor = 3
+maxRockScaleFactor = 40
+
+rock0 = [[[1, 1], [2, 0], [1, -1], [-1, -1], [-2, 0], [-1, 1], [1, 1]]]
+rock1 = [[[1, 2], [3, 1], [3, -1], [1, -2], [-1, -2], [-3, -1], [-3, 1], [-1, 2], [1, 2]]]
+rock2 = [[[1, 1], [1, -1], [-0.5, -0.5], [-2, 0], [-1, 1], [1, 1]]]
+
+spaceRocks = rock0 + rock1 + rock2
+nRockTypes = len(spaceRocks)
 
 
-
-class spaceRock(p.sprite.Sprite):
-
+class spaceRock():
   def __init__(self, gameWidth, gameHeight):
-    super().__init__()
-
     self.x = random.randint(0, gameWidth - 1)
     self.y = random.randint(0, gameHeight - 1)
     self.heading = random.randint(0, 359)
     self.xVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
-    self.scaleFactorX = random.randint(2, maxRockScaleFactor)
-    self.scaleFactorY = random.randint(2, maxRockScaleFactor)
-
-    # rock image
-    self.image = p.image.load("./sprites/rocks/rock0.png").convert_alpha()
-    #self.image = p.transform.scale(self.image, (self.image.get_width() * 2, self.image.get_height() * 2))
-
-    # rect obj for sprite
-    self.rect = self.image.get_rect()
+    self.scaleFactorX = random.randint(20, maxRockScaleFactor)
+    self.scaleFactorY = random.randint(20, maxRockScaleFactor)
+    index = random.randint(0, nRockTypes - 1)
+    self.myPoints = spaceRocks[index]
 
     # This is passed from main
     self.screenWidth = gameWidth
     self.screenHeight = gameHeight
+
+    # Find center of rotation.
+    xSum = ySum = 0
+    for myPoint in self.myPoints:
+      xSum = xSum + myPoint[0]
+      ySum = ySum + myPoint[1]
+
+    self.xc = xSum / len(self.myPoints)
+    self.yc = ySum / len(self.myPoints)
+
+    # Find a bounding box for this asteroid.
+    xs = []
+    ys = []
+    for myPoint in self.myPoints:
+      x = myPoint[0]
+      y = myPoint[1]
+
+      # Rotate and scale these points.
+      xr, yr = rotatePoint(self.xc, self.yc, x, y, self.heading)
+      xScale = xr * self.scaleFactorX
+      yScale = yr * self.scaleFactorY
+      xs.append(xScale)
+      ys.append(yScale)
+
+    self.minX = min(xs)
+    self.maxX = max(xs)
+    self.minY = min(ys)
+    self.maxY = max(ys)
 
     index = random.randint(0, nColors - 1)
     self.color = colorPalette[index]
@@ -68,9 +93,6 @@ class spaceRock(p.sprite.Sprite):
       self.y = self.screenHeight - 1
     elif (self.y > self.screenHeight):
       self.y = 0
-    
-    self.rect.x = self.x
-    self.rect.y = self.y
 
     return
 
@@ -92,12 +114,32 @@ class spaceRock(p.sprite.Sprite):
 # lol ok, this is a good outline tho!
 
   def drawMe(self, screen):
-    if (self.isActive):
-      
-      colorImage = p.Surface(self.image.get_size()).convert_alpha()
-      colorImage.fill(self.color)
-      self.image.blit(colorImage, (0,0), special_flags = p.BLEND_RGBA_MULT)
-      screen.blit(self.image, p.Rect(self.x, self.y, 32, 22))
+    
+    points = []
+    for myPoint in self.myPoints:
+      # Get coords of point.
+      x0 = float(myPoint[0])
+      y0 = float(myPoint[1])
+
+      # Rotate the point.
+      myRadius = getDist(self.xc, self.yc, x0, y0)
+      theta = math.atan2(y0 - self.yc, x0 - self.xc)
+      radAng = deg2Rad(self.heading)
+      xr = self.xc + myRadius * math.cos(radAng + theta)
+      yr = self.yc + myRadius * math.sin(radAng + theta)
+
+      # Scale.
+      xs = xr * self.scaleFactorX
+      ys = yr * self.scaleFactorY
+
+      # Translate.
+      xt = xs + self.x
+      yt = ys + self.y
+
+      # Put point into polygon point list.
+      points.append([xt, yt])
+
+    p.draw.polygon(screen, self.color, points, width=2)
 
     return
 
@@ -105,8 +147,8 @@ class spaceRock(p.sprite.Sprite):
     smack = False
 
     # i turned these into one check :)
-    x_min_check = ((x >= self.x) and (x <= self.x + self.image.get_width()))
-    y_min_check = ((y >= self.y) and (y <= self.y + self.image.get_height()))
+    x_min_check = ((x >= self.minX + self.x) and (x <= self.maxX + self.x))
+    y_min_check = ((y >= self.minY + self.y) and (y <= self.maxY + self.y))
 
     if x_min_check and y_min_check:
       smack = True

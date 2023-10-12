@@ -34,15 +34,15 @@ screenWidth = 1000
 screenHeight = 700
 
 # game dimensions, for game world
-gameWidth = 5000
-gameHeight = 3500
+gameWidth = 1000
+gameHeight = 700
 
 gameMidX = screenWidth / 2
 gameMidY = screenHeight / 2
 
 # General constants and variables defined.
-
-nAsteroids = 150
+# Keep asteroid count low, they won't exist too far outside the camera
+nAsteroids = 5
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -84,7 +84,7 @@ class camera:
   # called by moveCam
   def offsetObjects(self, obj, incX, incY):
 
-    if type(obj) == list or type(obj) == set:
+    if type(obj) == list:
       for o in obj:
         o.x -= incX
         o.y -= incY
@@ -131,14 +131,10 @@ def asteroidMe():
   shotCount = 0
 
   # Make some asteroids - that is space rocks.
-  myAsteroids = set()
-  # sprite group, use in collisions
-  astGroup = p.sprite.Group()
+  myAsteroids = []
 
   for j in range(nAsteroids):
-    newAst = spaceRock(gameWidth, gameHeight)
-    myAsteroids.add(newAst)
-    astGroup.add(newAst)
+    myAsteroids.append(spaceRock(gameWidth, gameHeight))
 
   # Clock/game frame things.
   tickTock = 0
@@ -201,7 +197,7 @@ def asteroidMe():
       # collisions
       for aa in myAsteroids:
         if (a != aa):
-          if p.sprite.collide_rect(a, aa):
+          if a.checkCollision(aa.x, aa.y):
             a.reverseDir()
             aa.reverseDir()
 
@@ -214,6 +210,7 @@ def asteroidMe():
           if (smacked == True):
             b.setExplosion()
             a.isActive = False
+            myAsteroids.remove(a)
 
     # --- Screen-clearing code goes here
 
