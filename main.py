@@ -42,7 +42,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
-nAsteroids = 5
+nAsteroids = 10
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -191,22 +191,47 @@ def asteroidMe():
     for b in bullets:
       b.moveMe()
 
+
+    # make a gianter asteroid
+    merge = False
+    newAst = None
+    # prevent "can't find x in list.remove(x)" error
+    toRemove0, toRemove1 = False, False
     for a in myAsteroids:
       a.moveMe()
 
       # collisions
       for aa in myAsteroids:
         if (a != aa):
-          if a.checkCollision(aa.x, aa.y):
+          smack, sameCol = a.checkCollision(aa.x, aa.y, aa.color)
+
+          # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
+          if sameCol and (a.scaleFactorX < 35 or a.scaleFactorY < 35) and (aa.scaleFactorX < 35 or aa.scaleFactorY < 35):
+            newAst = spaceRock(gameWidth, gameHeight, 35, 35)
+            merge = True
+            newAst.x = a.x
+            newAst.y = a.y
+            newAst.color = a.color
+
+            toRemove0 = a
+            toRemove1 = aa
+
+          elif smack:
             a.reverseDir()
             aa.reverseDir()
+    
+    if merge:
+      myAsteroids.remove(toRemove0)
+      myAsteroids.remove(toRemove1)
+
+      myAsteroids.append(newAst)
 
 
     # Check to see if a bullet hit an asteroid.
     for a in myAsteroids:
       for b in bullets:
         if (a.isActive and b.isActive):
-          smacked = a.checkCollision(b.x, b.y)
+          smacked, _ = a.checkCollision(b.x, b.y)
           if (smacked == True):
             b.setExplosion()
             a.isActive = False

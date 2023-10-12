@@ -1,18 +1,18 @@
 import pygame as p
 import random
 import math
+from timer import Timer
 from util import deg2Rad, getDist, rotatePoint
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 
-colorPalette = [WHITE, GREEN, RED, ORANGE, YELLOW, CYAN, MAGENTA]
+colorPalette = [WHITE, GREEN, RED, YELLOW, CYAN, MAGENTA]
 nColors = len(colorPalette)
 
 # Space rock variables.
@@ -28,16 +28,20 @@ nRockTypes = len(spaceRocks)
 
 
 class spaceRock():
-  def __init__(self, gameWidth, gameHeight):
+  def __init__(self, gameWidth, gameHeight, minScaleX=5, minScaleY=5):
     self.x = random.randint(0, gameWidth - 1)
     self.y = random.randint(0, gameHeight - 1)
     self.heading = random.randint(0, 359)
     self.xVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
-    self.scaleFactorX = random.randint(20, maxRockScaleFactor)
-    self.scaleFactorY = random.randint(20, maxRockScaleFactor)
+    self.scaleFactorX = random.randint(minScaleX, maxRockScaleFactor) # default scale is 10, args passed for when two rocks merge 
+    self.scaleFactorY = random.randint(minScaleY, maxRockScaleFactor)
     index = random.randint(0, nRockTypes - 1)
     self.myPoints = spaceRocks[index]
+    self.didBounce = False
+
+    # timers
+    self.timers = []
 
     # This is passed from main
     self.screenWidth = gameWidth
@@ -141,20 +145,36 @@ class spaceRock():
 
     p.draw.polygon(screen, self.color, points, width=2)
 
+    # check collision shape
+    #p.draw.rect(screen, GREEN, p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY), width=3)
+
     return
 
-  def checkCollision(self, x, y):
+  def checkCollision(self, x, y, color=(1,1,1)):
     smack = False
+    sameCol = False
 
     # i turned these into one check :)
-    x_min_check = ((x >= self.minX + self.x) and (x <= self.maxX + self.x))
-    y_min_check = ((y >= self.minY + self.y) and (y <= self.maxY + self.y))
+    x_min_check = ((x >= self.x) and (x <= 2 * self.maxX + self.x))
+    y_min_check = ((y >= self.y) and (y <= 2 * self.maxY + self.y))
 
-    if x_min_check and y_min_check:
+    if x_min_check and y_min_check and (not self.didBounce):
       smack = True
+      self.didBounce = True
+      
+      if self.color == color:
+        sameCol = True
+    
+    elif (not x_min_check) and (not y_min_check):
+      self.didBounce = False
 
-    return smack
+    return smack, sameCol
   
   def reverseDir(self):
     self.xVel = -self.xVel
     self.yVel = -self.yVel
+
+
+  def tick(self):
+    for t in self.timers:
+      t.tick()
