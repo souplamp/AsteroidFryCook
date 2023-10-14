@@ -42,7 +42,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
-nAsteroids = 10
+nAsteroids = 50
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]

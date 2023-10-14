@@ -19,6 +19,9 @@ nColors = len(colorPalette)
 maxRockVelocity = 2
 maxRockScaleFactor = 40
 
+# bounds outside the camera
+bound = 512
+
 rock0 = [[[1, 1], [2, 0], [1, -1], [-1, -1], [-2, 0], [-1, 1], [1, 1]]]
 rock1 = [[[1, 2], [3, 1], [3, -1], [1, -2], [-1, -2], [-3, -1], [-3, 1], [-1, 2], [1, 2]]]
 rock2 = [[[1, 1], [1, -1], [-0.5, -0.5], [-2, 0], [-1, 1], [1, 1]]]
@@ -29,8 +32,8 @@ nRockTypes = len(spaceRocks)
 
 class spaceRock():
   def __init__(self, gameWidth, gameHeight, minScaleX=5, minScaleY=5):
-    self.x = random.randint(0, gameWidth - 1)
-    self.y = random.randint(0, gameHeight - 1)
+    self.x = random.randint(0 - bound, gameWidth + bound - 1)
+    self.y = random.randint(0 - bound, gameHeight + bound - 1)
     self.heading = random.randint(0, 359)
     self.xVel = random.randint(-maxRockVelocity, maxRockVelocity)
     self.yVel = random.randint(-maxRockVelocity, maxRockVelocity)
@@ -88,15 +91,15 @@ class spaceRock():
     self.y = self.y + self.yVel
 
     # If rock is outside of game space wrap it to other side.
-    if (self.x < 0):
-      self.x = self.screenWidth - 1
-    elif (self.x > self.screenWidth):
-      self.x = 0
+    if (self.x < 0 - bound):
+      self.x = self.screenWidth + bound - 1
+    elif (self.x > self.screenWidth + bound):
+      self.x = 0 - bound
 
-    if (self.y < 0):
-      self.y = self.screenHeight - 1
-    elif (self.y > self.screenHeight):
-      self.y = 0
+    if (self.y < 0 - bound):
+      self.y = self.screenHeight + bound - 1
+    elif (self.y > self.screenHeight + bound):
+      self.y = 0 - bound
 
     return
 
@@ -155,8 +158,8 @@ class spaceRock():
     sameCol = False
 
     # i turned these into one check :)
-    x_min_check = ((x >= self.x) and (x <= 2 * self.maxX + self.x))
-    y_min_check = ((y >= self.y) and (y <= 2 * self.maxY + self.y))
+    x_min_check = ((x >= self.x - self.maxX) and (x <= self.maxX + self.x))
+    y_min_check = ((y >= self.y - self.maxY) and (y <= self.maxY + self.y))
 
     if x_min_check and y_min_check and (not self.didBounce):
       smack = True
