@@ -42,7 +42,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
-nAsteroids = 50
+nAsteroids = 20
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -97,6 +97,7 @@ class camera:
       obj.y -= incY
 
 
+
 def asteroidMe():
   # Initialize pygame.
   p.init()
@@ -136,11 +137,15 @@ def asteroidMe():
   # Make some asteroids - that is space rocks.
   myAsteroids = []
 
-  for j in range(nAsteroids):
+  def spawnAsteroid():
     myAsteroids.append(spaceRock(gameWidth, gameHeight))
+
+  for j in range(nAsteroids):
+    spawnAsteroid()
 
   # Clock/game frame things.
   tickTock = 0
+  p.time.set_timer(1, 5000) # spawn rocks every x seconds, don't go over len nAsteroids
 
   # -------- Main Program Loop -----------
   while running:
@@ -148,6 +153,11 @@ def asteroidMe():
     for event in p.event.get():
       if event.type == p.QUIT:
         running = False
+
+      if (event.type == 1):
+        if len(myAsteroids) < nAsteroids:
+          spawnAsteroid()
+          
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
 

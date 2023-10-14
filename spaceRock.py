@@ -168,7 +168,7 @@ class spaceRock():
       if self.color == color:
         sameCol = True
     
-    elif (not x_min_check) and (not y_min_check):
+    elif (not x_min_check) and (not y_min_check) and (self.didBounce):
       self.didBounce = False
 
     return smack, sameCol
