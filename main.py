@@ -34,8 +34,8 @@ screenWidth = 1000
 screenHeight = 700
 
 # game dimensions, for game world
-gameWidth = 1000
-gameHeight = 700
+gameWidth = 2000
+gameHeight = 1400
 
 gameMidX = screenWidth / 2
 gameMidY = screenHeight / 2
@@ -70,13 +70,16 @@ class camera:
     self.topLeftX += incX
     self.topLeftY += incY
 
-    # If ship goes out of screen, wrap it other side.
-    """
-    if (self.topLeftX < 0):
-      self.topLeftX = gameWidth - 1
-    elif (self.topLeftX > gameWidth):
-      self.topLeftX = 0
-    """
+    # If center of camera goes out of screen, wrap it other side.
+    if (self.topLeftX + (self.width / 2) < 0):
+      self.topLeftX = gameWidth - (self.width / 2) - 1
+    elif (self.topLeftX + (self.width / 2) > gameWidth):
+      self.topLeftX = 0 - (self.width / 2)
+
+    if (self.topLeftY + (self.height / 2) < 0):
+      self.topLeftY = gameHeight - (self.height / 2) - 1
+    elif (self.topLeftY + (self.height / 2) > gameHeight):
+      self.topLeftY = 0 - (self.height / 2)
   
     return incX, incY
 
