@@ -46,7 +46,7 @@ gameMidY = screenHeight / 2
 nAsteroids = 20
 maxShootingDelay = 30
 
-basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
+basicShip = [[-3, 3], [6, 0], [-3, -3], [-3, 3]]
 
 # append game objects to this list whenever they're instantiated, used for camera offset function to have the camera work
 entities = []
@@ -149,7 +149,7 @@ def asteroidMe():
 
   # Clock/game frame things.
   tickTock = 0
-  p.time.set_timer(1, 5000) # spawn rocks every x seconds, don't go over len nAsteroids
+  p.time.set_timer(1, 3000) # spawn rocks every x seconds, don't go over len nAsteroids
 
   # -------- Main Program Loop -----------
   while running:
@@ -223,7 +223,7 @@ def asteroidMe():
           smack, sameCol = a.checkCollision(aa.x, aa.y, aa.color)
 
           # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
-          if sameCol and (a.scaleFactorX < 35 or a.scaleFactorY < 35) and (aa.scaleFactorX < 35 or aa.scaleFactorY < 35):
+          if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
             newAst = spaceRock(gameWidth, gameHeight, 35, 35)
             merge = True
             newAst.x = a.x
