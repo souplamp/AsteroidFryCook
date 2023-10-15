@@ -149,17 +149,24 @@ class spaceRock():
     p.draw.polygon(screen, self.color, points, width=2)
 
     # check collision shape
-    #p.draw.rect(screen, GREEN, p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY), width=3)
+    p.draw.rect(screen, GREEN, p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY), width=3)
 
     return
 
-  def checkCollision(self, x, y, color=(1,1,1)):
+  # for asteroids
+  def checkCollisionAst(self, asteroid):
+    x = asteroid.x
+    y = asteroid.y
+    color = asteroid.color
+    maxX = asteroid.maxX
+    maxY = asteroid.maxY
+
     smack = False
     sameCol = False
 
     # i turned these into one check :)
-    x_min_check = ((x >= self.x - self.maxX) and (x <= self.maxX + self.x))
-    y_min_check = ((y >= self.y - self.maxY) and (y <= self.maxY + self.y))
+    x_min_check = ((x + maxX >= self.x - self.maxX) and (x - maxX <= self.x + self.maxX))
+    y_min_check = ((y + maxY >= self.y - self.maxY) and (y - maxX <= self.y + self.maxY))
 
     if x_min_check and y_min_check and (not self.didBounce):
       smack = True
@@ -172,6 +179,18 @@ class spaceRock():
       self.didBounce = False
 
     return smack, sameCol
+
+  # for bullets
+  def checkCollision(self, x, y):
+    smack = False
+
+    x_min_check = ((x >= self.x - self.maxX) and (x <= self.maxX + self.x))
+    y_min_check = ((y >= self.y - self.maxY) and (y <= self.maxY + self.y))
+
+    if x_min_check and y_min_check:
+      smack = True
+
+    return smack
   
   def reverseDir(self):
     self.xVel = -self.xVel

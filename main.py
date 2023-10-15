@@ -220,7 +220,7 @@ def asteroidMe():
       # collisions
       for aa in myAsteroids:
         if (a != aa):
-          smack, sameCol = a.checkCollision(aa.x, aa.y, aa.color)
+          smack, sameCol = a.checkCollisionAst(aa)
 
           # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
           if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
@@ -248,7 +248,7 @@ def asteroidMe():
     for a in myAsteroids:
       for b in bullets:
         if (a.isActive and b.isActive):
-          smacked, _ = a.checkCollision(b.x, b.y)
+          smacked = a.checkCollision(b.x, b.y)
           if (smacked == True):
             b.setExplosion()
             a.isActive = False
