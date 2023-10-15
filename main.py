@@ -15,6 +15,7 @@ from util import deg2Rad, getDist, rotatePoint
 from bullet import bullet
 from spaceRock import spaceRock
 from spaceShip import spaceShip
+from grill import grill
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -30,8 +31,8 @@ colorPalette = [WHITE, GREEN, RED, ORANGE, YELLOW, CYAN, MAGENTA]
 nColors = len(colorPalette)
 
 # screen dimensions, for camera
-screenWidth = 1000
-screenHeight = 700
+screenWidth = 1480
+screenHeight = 920
 
 # game dimensions, for game world
 gameWidth = 2000
@@ -106,7 +107,7 @@ def asteroidMe():
   size = (screenWidth, screenHeight)
   screen = p.display.set_mode(size)
 
-  p.display.set_caption("asteroidMe()")
+  p.display.set_caption("Asteroid Frycook")
 
   # Set up random number generator.
   random.seed()
@@ -119,6 +120,9 @@ def asteroidMe():
   
   # camera object
   c = camera(0, 0, screenWidth, screenHeight)
+
+  # the grill
+  theGrill = grill(460, 240, screenWidth, screenHeight)
 
   # Set up some game objects.
   # Space ship stuff.
@@ -270,11 +274,15 @@ def asteroidMe():
     # Asteroids
     for a in myAsteroids:
       a.drawMe(screen)
-      
-     
+
+
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
+    # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
+    theGrill.drawMe(screen)
+
+      
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()
 
