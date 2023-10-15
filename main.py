@@ -158,9 +158,16 @@ def asteroidMe():
       if event.type == p.QUIT:
         running = False
 
+      # spawn asteroids
       if (event.type == 1):
         if len(myAsteroids) < nAsteroids:
           spawnAsteroid()
+      
+      # click patty
+      if (event.type == p.MOUSEBUTTONUP):
+        for pat in theGrill.patties:
+          x, y = p.mouse.get_pos()
+          pat.checkClick(x, y)
           
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
@@ -235,7 +242,7 @@ def asteroidMe():
 
           elif smack:
             a.reverseDir()
-            aa.reverseDir()
+            #aa.reverseDir()
     
     if merge:
       myAsteroids.remove(toRemove0)

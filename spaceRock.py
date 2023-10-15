@@ -81,6 +81,8 @@ class spaceRock():
     index = random.randint(0, nColors - 1)
     self.color = colorPalette[index]
 
+    self.rect = p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY)
+
     self.isActive = True
   
 
@@ -100,6 +102,10 @@ class spaceRock():
       self.y = self.screenHeight + bound - 1
     elif (self.y > self.screenHeight + bound):
       self.y = 0 - bound
+    
+    # update rect for collision
+    self.rect.x = self.x - self.maxX
+    self.rect.y = self.y - self.maxY
 
     return
 
@@ -148,34 +154,29 @@ class spaceRock():
 
     p.draw.polygon(screen, self.color, points, width=2)
 
-    # check collision shape
-    p.draw.rect(screen, GREEN, p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY), width=3)
+    # debug check collision shape
+    #p.draw.rect(screen, GREEN, self.rect, width=3)
 
     return
 
   # for asteroids
   def checkCollisionAst(self, asteroid):
-    x = asteroid.x
-    y = asteroid.y
     color = asteroid.color
-    maxX = asteroid.maxX
-    maxY = asteroid.maxY
 
     smack = False
     sameCol = False
 
-    # i turned these into one check :)
-    x_min_check = ((x + maxX >= self.x - self.maxX) and (x - maxX <= self.x + self.maxX))
-    y_min_check = ((y + maxY >= self.y - self.maxY) and (y - maxX <= self.y + self.maxY))
+    # use pygame's rect collision check
+    rect_check = self.rect.colliderect(asteroid.rect)
 
-    if x_min_check and y_min_check and (not self.didBounce):
+    if rect_check and (not self.didBounce):
       smack = True
       self.didBounce = True
       
       if self.color == color:
         sameCol = True
     
-    elif (not x_min_check) and (not y_min_check) and (self.didBounce):
+    elif (not rect_check) and (self.didBounce):
       self.didBounce = False
 
     return smack, sameCol
@@ -184,10 +185,9 @@ class spaceRock():
   def checkCollision(self, x, y):
     smack = False
 
-    x_min_check = ((x >= self.x - self.maxX) and (x <= self.maxX + self.x))
-    y_min_check = ((y >= self.y - self.maxY) and (y <= self.maxY + self.y))
+    point_check = self.rect.collidepoint(x, y)
 
-    if x_min_check and y_min_check:
+    if point_check:
       smack = True
 
     return smack
