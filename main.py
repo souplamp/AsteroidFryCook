@@ -46,7 +46,7 @@ gameMidY = screenHeight / 2
 nAsteroids = 20
 maxShootingDelay = 30
 
-basicShip = [[-3, 3], [6, 0], [-3, -3], [-3, 3]]
+basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
 
 # append game objects to this list whenever they're instantiated, used for camera offset function to have the camera work
 entities = []
@@ -84,6 +84,8 @@ class camera:
       self.topLeftY = 0 - (self.height / 2)
 
     return incX, incY
+  
+
   def moveCam(self, speed, heading):
     radAng = deg2Rad(heading)
 
@@ -203,27 +205,27 @@ def asteroidMe():
 
     if (key[p.K_w] == True):
       #ship.moveMe(shipSpeed)
-      incX, incY = c.moveCam(shipSpeed, ship.heading)
+      incX, incY = c.moveCam(shipSpeed, 270)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_s] == True):
       #ship.moveMe(-1 * shipSpeed)
-      incX, incY = c.moveCam(-1 * shipSpeed, ship.heading)
+      incX, incY = c.moveCam(shipSpeed, 90)
       
       for e in entities:
         c.offsetObjects(e, incX, incY)
     if (key[p.K_a] == True):
       # ship.moveMe(shipSpeed)
-      incX, incY = c.moveCamSide(shipSpeed, ship.heading)
+      incX, incY = c.moveCam(shipSpeed, 180)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_d] == True):
       # ship.moveMe(-1 * shipSpeed)
-      incX, incY = c.moveCamSide(-1 * shipSpeed, ship.heading)
+      incX, incY = c.moveCam(shipSpeed, 0)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
