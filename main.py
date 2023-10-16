@@ -3,7 +3,7 @@
 Created on Tue Oct  3 13:00:54 2023
 
 base asteroid code by Dr. Patrick McDowell
-modified by Brady Landry
+modified by Brady, Robert, and Cam
 """
 
 import pygame as p
@@ -61,8 +61,29 @@ class camera:
     self.height = height
     self.halfW = width / 2
     self.halfH = height / 2
-      
-  
+
+  def moveCamSide(self, speed, heading):
+    heading = heading + 90
+    radAng = deg2Rad(heading)
+    # x*pi/180
+
+    incX = (speed * math.cos(radAng))
+    incY = (speed * math.sin(radAng))
+    self.topLeftX += incX
+    self.topLeftY += incY
+
+    # If center of camera goes out of screen, wrap it other side.
+    if (self.topLeftX + (self.width / 2) < 0):
+      self.topLeftX = gameWidth - (self.width / 2) - 1
+    elif (self.topLeftX + (self.width / 2) > gameWidth):
+      self.topLeftX = 0 - (self.width / 2)
+
+    if (self.topLeftY + (self.height / 2) < 0):
+      self.topLeftY = gameHeight - (self.height / 2) - 1
+    elif (self.topLeftY + (self.height / 2) > gameHeight):
+      self.topLeftY = 0 - (self.height / 2)
+
+    return incX, incY
   def moveCam(self, speed, heading):
     radAng = deg2Rad(heading)
 
@@ -137,6 +158,7 @@ def asteroidMe():
   bulletSize = int(0.5 * scaleFactor)
   bulletSpeed = 3 * shipSpeed
   shotCount = 0
+  act_count = 0
 
   # Make some asteroids - that is space rocks.
   myAsteroids = []
@@ -192,15 +214,35 @@ def asteroidMe():
       
       for e in entities:
         c.offsetObjects(e, incX, incY)
-
     if (key[p.K_a] == True):
-      ship.turn(-3)
+      # ship.moveMe(shipSpeed)
+      incX, incY = c.moveCamSide(shipSpeed, ship.heading)
+
+      for e in entities:
+        c.offsetObjects(e, incX, incY)
 
     if (key[p.K_d] == True):
+      # ship.moveMe(-1 * shipSpeed)
+      incX, incY = c.moveCamSide(-1 * shipSpeed, ship.heading)
+
+      for e in entities:
+        c.offsetObjects(e, incX, incY)
+    if (key[p.K_q] == True):
+      ship.turn(-3)
+
+    if (key[p.K_e] == True):
       ship.turn(3)
 
     if (key[p.K_LSHIFT] == True):
-      print("Shield is Active(WIP)")
+
+      if ship.shieldActive == False and act_count>9:
+        ship.shieldActive = True
+        act_count = 0
+        print("Shield is Active(WIP)")
+      if ship.shieldActive == True and act_count>9:
+        ship.shieldActive = False
+        act_count = 0
+        print("Shield is No Longer Active")
 
     if (key[p.K_SPACE] == True):
       if (shotCount == 0) and (ship.shoot()):

@@ -21,6 +21,8 @@ class spaceShip:
       self.screenY = y0
       self.heading = heading0
       self.scaleFactor = scaleFactor0
+      self.shieldCharge = 100
+      self.shieldActive = False
       self.ammo = 4   # patties are ammo, ammo is patties
     
       # This is passed from main
