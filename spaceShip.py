@@ -21,6 +21,7 @@ class spaceShip:
       self.screenY = y0
       self.heading = heading0
       self.scaleFactor = scaleFactor0
+      self.ammo = 4   # patties are ammo, ammo is patties
     
       # This is passed from main
       self.screenWidth = screenWidth
@@ -114,3 +115,16 @@ class spaceShip:
         self.heading = 359
     
       return
+
+    def addAmmo(self):
+      self.ammo += 1
+
+    # return boolean, used for if statement in main
+    # only allow a shot if you have ammo left
+    def shoot(self):
+      ammoLeft = (self.ammo > 0)
+
+      if ammoLeft:
+        self.ammo -= 1
+
+      return ammoLeft

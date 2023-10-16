@@ -68,23 +68,24 @@ class patty(p.sprite.Sprite):
     
     def checkClick(self, mX, mY):
 
-        click = False
+        returnPatty = False
 
         if self.rect.collidepoint(mX, mY):
-            click = True
-            self.changeState()
+            returnPatty = self.changeState()
 
-        return click
+        return returnPatty
 
     def changeState(self):
 
         returnPatty = False
 
+        # place patty on grill
         if self.state == 0:
             self.state = 1
             self.cookTimer.set(360)
             self.burnTimer.set(720)
 
+        # remove cooked patty from grill
         elif self.state == 3:
             returnPatty = True
             self.state = 0
@@ -92,12 +93,14 @@ class patty(p.sprite.Sprite):
             self.burnTimer.reset()
             self.readyToFlip = False
 
+        # remove burned patty from grill
         elif self.state == 4:
             self.state = 0
             self.cookTimer.reset()
             self.cookTimer.reset()
             self.readyToFlip = False
 
+        # flip the patty
         elif self.readyToFlip:
             if self.state < 3:
                 self.state += 1

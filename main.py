@@ -167,7 +167,10 @@ def asteroidMe():
       if (event.type == p.MOUSEBUTTONUP):
         for pat in theGrill.patties:
           x, y = p.mouse.get_pos()
-          pat.checkClick(x, y)
+          cookedPatty = pat.checkClick(x, y)
+
+          if cookedPatty:
+            ship.addAmmo()
           
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
@@ -200,7 +203,7 @@ def asteroidMe():
       print("Shield is Active(WIP)")
 
     if (key[p.K_SPACE] == True):
-      if (shotCount == 0):
+      if (shotCount == 0) and (ship.shoot()):
         gunX, gunY = ship.getGunSpot()
         myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed, gameWidth, gameHeight)
         bullets.append(myBullet)
