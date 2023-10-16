@@ -21,6 +21,8 @@ class spaceShip:
       self.screenY = y0
       self.heading = heading0
       self.scaleFactor = scaleFactor0
+      self.shieldCharge = 100
+      self.shieldActive = False
     
       # This is passed from main
       self.screenWidth = screenWidth
