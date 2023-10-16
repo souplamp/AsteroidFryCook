@@ -43,9 +43,6 @@ class spaceRock():
     self.myPoints = spaceRocks[index]
     self.didBounce = False
 
-    # timers
-    self.timers = []
-
     # This is passed from main
     self.screenWidth = gameWidth
     self.screenHeight = gameHeight
@@ -82,6 +79,9 @@ class spaceRock():
     self.color = colorPalette[index]
 
     self.rect = p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY)
+    self.coll_mask = p.mask.Mask((self.rect.width, self.rect.height))  # for collision
+    self.coll_mask.fill()
+    self.mask_image = self.coll_mask.to_surface()
 
     self.isActive = True
   
@@ -156,6 +156,7 @@ class spaceRock():
 
     # debug check collision shape
     #p.draw.rect(screen, GREEN, self.rect, width=3)
+    #screen.blit(self.mask_image, (self.rect.x, self.rect.y))
 
     return
 
@@ -197,8 +198,10 @@ class spaceRock():
     newXVel = math.cos(ang)
     newYVel = math.sin(ang)
 
-    self.xVel = -newXVel
-    self.yVel = -newYVel
+    speed = math.sqrt((self.xVel ** 2) + (self.yVel ** 2))
+
+    self.xVel = -newXVel * speed
+    self.yVel = -newYVel * speed
 
 
   def tick(self):

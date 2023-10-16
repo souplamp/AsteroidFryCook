@@ -275,6 +275,8 @@ def asteroidMe():
       for aa in myAsteroids:
         if (a != aa):
           smack, sameCol = a.checkCollisionAst(aa)
+          if ship.coll_mask.overlap(a.coll_mask, (ship.x - a.x, ship.y - a.y)):
+            print("ast hit!")
 
           # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
           if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):

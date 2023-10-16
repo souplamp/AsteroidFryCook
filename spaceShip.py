@@ -21,13 +21,20 @@ class spaceShip:
       self.screenY = y0
       self.heading = heading0
       self.scaleFactor = scaleFactor0
+
       self.shieldCharge = 100
       self.shieldActive = False
+
       self.ammo = 4   # patties are ammo, ammo is patties
     
       # This is passed from main
       self.screenWidth = screenWidth
       self.screenHeight = screenHeight
+
+      # Collision circle, for interacting with game objects like asteroids
+      img = (p.image.load("./sprites/ship_mask.png").convert_alpha())
+      self.coll_mask = p.mask.from_surface(img)
+      self.mask_image = self.coll_mask.to_surface()
       
     
       # Find center of rotation.
@@ -106,6 +113,10 @@ class spaceShip:
         points.append([xt, yt])
     
       p.draw.polygon(screen, color, points, width=2)
+
+      # for debug
+      #screen.blit(self.mask_image,(self.x - 12, self.y - 28))
+      
       return
     
     def turn(self, inc):
