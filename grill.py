@@ -5,6 +5,7 @@ from animatedSprite import animatedSprite
 WHITE = (255, 255, 255)
 RED = (255, 0, 75)
 BROWN = (160, 30, 20)
+BLACK = (50, 50, 50)
 
 
 class patty(p.sprite.Sprite):
@@ -13,6 +14,9 @@ class patty(p.sprite.Sprite):
         super().__init__()
         self.rect = rect
         self.state = 0  # state of the patty, like not-yet-placed, cooking, cooked, burned
+        self.readyToFlip = False
+        self.cookTimer = Timer()
+        self.burnTimer = Timer()    # is set after cook timer, patty will burn if left too long
         
         # drawn images
         self.imgSet = []
@@ -41,9 +45,14 @@ class patty(p.sprite.Sprite):
         elif self.state == 2:
             img = self.imgSet[2]
             color = RED
-        else:
+        elif self.state == 3:
             img = self.imgSet[2]
             color = BROWN
+
+        # 4 is burn state
+        elif self.state == 4:
+            img = self.imgSet[2]
+            color = BLACK
 
         # color-changing solution found on stack exchange
         colorImage = p.Surface(img.get_size())
@@ -54,16 +63,58 @@ class patty(p.sprite.Sprite):
 
         screen.blit(blitimg, (self.rect.x, self.rect.y))
 
-        self.smokeAnim.play(screen)
+        if self.readyToFlip: self.smokeAnim.play(screen)
     
     
     def checkClick(self, mX, mY):
 
+        click = False
+
         if self.rect.collidepoint(mX, mY):
-            if self.state < 4:
+            click = True
+            self.changeState()
+
+        return click
+
+    def changeState(self):
+
+        returnPatty = False
+
+        if self.state == 0:
+            self.state = 1
+            self.cookTimer.set(360)
+            self.burnTimer.set(720)
+
+        elif self.state == 3:
+            returnPatty = True
+            self.state = 0
+            self.cookTimer.reset()
+            self.cookTimer.reset()
+            self.readyToFlip = False
+            
+        elif self.state == 4:
+            self.state = 0
+            self.readyToFlip = False
+
+        elif self.readyToFlip:
+            if self.state < 3:
                 self.state += 1
-            else:
-                self.state = 0
+                self.readyToFlip = False
+                self.cookTimer.set(360)
+                self.burnTimer.set(720)
+        
+        return returnPatty
+
+    def tick(self):
+        self.cookTimer.tick()
+        self.burnTimer.tick()
+        
+        if self.cookTimer.get() == 0:
+            self.readyToFlip = True
+        
+        if self.burnTimer.get() == 0:
+            self.state = 4
+
 
 
 class grill():
@@ -104,5 +155,6 @@ class grill():
         return
     
 
-    def clickCheck(self, mX, mY):
-        pass
+    def tick(self):
+        for pat in self.patties:
+            pat.tick()

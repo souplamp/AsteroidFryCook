@@ -31,8 +31,8 @@ colorPalette = [WHITE, GREEN, RED, ORANGE, YELLOW, CYAN, MAGENTA]
 nColors = len(colorPalette)
 
 # screen dimensions, for camera
-screenWidth = 1480
-screenHeight = 920
+screenWidth = 1180
+screenHeight = 620
 
 # game dimensions, for game world
 gameWidth = 2000
@@ -293,8 +293,9 @@ def asteroidMe():
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()
 
-    # --- Limit to 60 frames per second
+    # --- Limit to 60 frames per second. Tick game object timers here
     clock.tick(60)
+    theGrill.tick()
 
     # Update frame count.
     tickTock = tickTock + 1
