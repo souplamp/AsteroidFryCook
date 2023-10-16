@@ -89,11 +89,13 @@ class patty(p.sprite.Sprite):
             returnPatty = True
             self.state = 0
             self.cookTimer.reset()
-            self.cookTimer.reset()
+            self.burnTimer.reset()
             self.readyToFlip = False
-            
+
         elif self.state == 4:
             self.state = 0
+            self.cookTimer.reset()
+            self.cookTimer.reset()
             self.readyToFlip = False
 
         elif self.readyToFlip:
