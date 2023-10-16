@@ -192,9 +192,13 @@ class spaceRock():
 
     return smack
   
-  def reverseDir(self):
-    self.xVel = -self.xVel
-    self.yVel = -self.yVel
+  def reverseDir(self, asteroid):
+    ang = math.atan2(asteroid.y - self.y, asteroid.x - self.x)
+    newXVel = math.cos(ang)
+    newYVel = math.sin(ang)
+
+    self.xVel = -newXVel
+    self.yVel = -newYVel
 
 
   def tick(self):

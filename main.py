@@ -288,7 +288,7 @@ def asteroidMe():
             toRemove1 = aa
 
           elif smack:
-            a.reverseDir()
+            a.reverseDir(aa)
             #aa.reverseDir()
     
     if merge:
