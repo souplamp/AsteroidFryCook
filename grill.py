@@ -1,5 +1,11 @@
 import pygame as p
 from timer import Timer
+from animatedSprite import animatedSprite
+
+WHITE = (255, 255, 255)
+RED = (255, 0, 75)
+BROWN = (160, 30, 20)
+
 
 class patty(p.sprite.Sprite):
 
@@ -14,26 +20,50 @@ class patty(p.sprite.Sprite):
         self.imgSet.append(p.image.load("./sprites/grill/patties.png").convert_alpha())
         self.imgSet.append(p.image.load("./sprites/grill/pattiesflip.png").convert_alpha())
 
+        # Smoke animation
+        smokeImages = []
+        smokeImages.append(p.image.load("./sprites/grill/smoke_1.png").convert_alpha())
+        smokeImages.append(p.image.load("./sprites/grill/smoke_2.png").convert_alpha())
+        smokeImages.append(p.image.load("./sprites/grill/smoke_3.png").convert_alpha())
+
+        self.smokeAnim = animatedSprite(rect.x, rect.y + rect.height - smokeImages[0].get_height(), smokeImages)
+        self.smokeAnim.set_speed(0.1)
+
+
     def drawMe(self, screen):
+        color = WHITE
+
         if self.state == 0:
             img = self.imgSet[0]
         elif self.state == 1:
             img = self.imgSet[1]
+            color = RED
+        elif self.state == 2:
+            img = self.imgSet[2]
+            color = RED
         else:
             img = self.imgSet[2]
+            color = BROWN
 
-        screen.blit(img, (self.rect.x, self.rect.y))
+        # color-changing solution found on stack exchange
+        colorImage = p.Surface(img.get_size())
+        colorImage.fill(color)
+
+        blitimg = img.copy()
+        blitimg.blit(colorImage, (0, 0), special_flags = p.BLEND_RGBA_MULT)
+
+        screen.blit(blitimg, (self.rect.x, self.rect.y))
+
+        self.smokeAnim.play(screen)
+    
     
     def checkClick(self, mX, mY):
 
         if self.rect.collidepoint(mX, mY):
-            print("click on patty! state = ", self.state)
             if self.state < 4:
                 self.state += 1
             else:
                 self.state = 0
-
-            print("updated state to: ", self.state)
 
 
 class grill():
