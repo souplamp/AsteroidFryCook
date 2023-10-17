@@ -90,9 +90,13 @@ class spaceShip:
       isTheGunSpot = False
 
       if self.isActive:
+        
+        if self.hitTimer.get() >= 0:
 
-        if self.hitTimer.get() % 10 == 0:
-          color = WHITE
+          for i in range(2, 4):
+            if self.hitTimer.get() % i == 0:
+              color = BLACK
+
 
         for myPoint in myShip:
           if (myPoint == self.gunSpot):
