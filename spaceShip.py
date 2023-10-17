@@ -117,6 +117,20 @@ class spaceShip:
         self.heading = 359
       
       return
+
+    def getangletomouse(self):
+      mouse_pos = p.mouse.get_pos()
+      ship_pos = (self.x, self.y)
+
+      dx = ship_pos[0] - mouse_pos[0]
+      dy = ship_pos[1] - mouse_pos[1]
+
+      radians = math.atan2(-dy, dx)
+      radians %= 2 * math.pi
+
+      angle = math.degrees(radians)
+
+      return angle
     
     def turn(self, inc):
       self.heading = self.heading + inc
