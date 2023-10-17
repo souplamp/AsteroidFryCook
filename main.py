@@ -199,36 +199,42 @@ def asteroidMe():
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
 
+    move_up = key[p.K_w] == True
+    move_left = key[p.K_a] == True
+    move_down = key[p.K_s] == True
+    move_right = key[p.K_d] == True
+
     # Handle keypresses.
     if (key[p.K_ESCAPE] == True):
       running = False
 
     if (key[p.K_w] == True):
-      #ship.moveMe(shipSpeed)
       incX, incY = c.moveCam(shipSpeed, 270)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_s] == True):
-      #ship.moveMe(-1 * shipSpeed)
+      #ship.face(90)
       incX, incY = c.moveCam(shipSpeed, 90)
       
       for e in entities:
         c.offsetObjects(e, incX, incY)
+
     if (key[p.K_a] == True):
-      # ship.moveMe(shipSpeed)
+      #ship.face(180)
       incX, incY = c.moveCam(shipSpeed, 180)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_d] == True):
-      # ship.moveMe(-1 * shipSpeed)
+      #ship.face(0)
       incX, incY = c.moveCam(shipSpeed, 0)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
+    
     if (key[p.K_q] == True):
       ship.turn(-3)
 
@@ -253,6 +259,30 @@ def asteroidMe():
         bullets.append(myBullet)
         shotCount = maxShootingDelay
         
+    move_upleft = move_up and move_left
+    move_downleft = move_down and move_left
+    move_upright = move_up and move_right
+    move_downright = move_down and move_right
+
+    print(move_upleft)
+
+    if (move_up):
+      ship.face(270)
+    if (move_right):
+      ship.face(0)
+    if (move_down):
+      ship.face(90)
+    if (move_left):
+      ship.face(180)
+    if (move_upright):
+      ship.face(270 + 45)
+    if (move_downright):
+      ship.face(45)
+    if (move_downleft):
+      ship.face(90 + 45)
+    if (move_upleft):
+      ship.face(180 + 45)
+
         
     # --- Game logic should go here
     

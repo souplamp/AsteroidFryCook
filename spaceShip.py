@@ -107,6 +107,16 @@ class spaceShip:
     
       p.draw.polygon(screen, color, points, width=2)
       return
+
+    def face(self, inc):
+      self.heading = inc
+
+      if (self.heading > 359):
+        self.heading = 0
+      elif (self.heading < 0):
+        self.heading = 359
+      
+      return
     
     def turn(self, inc):
       self.heading = self.heading + inc
