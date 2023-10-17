@@ -112,9 +112,9 @@ class spaceShip:
       self.heading = inc
 
       if (self.heading > 359):
-        self.heading = 0
+        self.heading -= 360
       elif (self.heading < 0):
-        self.heading = 359
+        self.heading += 360
       
       return
 
@@ -128,19 +128,9 @@ class spaceShip:
       radians = math.atan2(dy, dx)
       radians %= 2 * math.pi
 
-      angle = math.degrees(radians)
+      angle = math.degrees(radians) + 180
 
       return angle
-    
-    def turn(self, inc):
-      self.heading = self.heading + inc
-    
-      if (self.heading > 359):
-        self.heading = 0
-      elif (self.heading < 0):
-        self.heading = 359
-    
-      return
 
     def addAmmo(self):
       self.ammo += 1
