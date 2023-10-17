@@ -16,6 +16,7 @@ from bullet import bullet
 from spaceRock import spaceRock
 from spaceShip import spaceShip
 from grill import grill
+from animatedSprite import animatedSprite
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -149,6 +150,9 @@ def asteroidMe():
   # the grill
   theGrill = grill(460, 240, screenWidth, screenHeight)
 
+  # animation(s)
+  explosionImg = []
+
   # Set up some game objects.
   # Space ship stuff.
   initialHeading = 90
@@ -167,12 +171,31 @@ def asteroidMe():
   # Make some asteroids - that is space rocks.
   myAsteroids = []
 
+  # Used for randomly deciding where to spawn asteroids
+  left, top = False, False
+  bound = 512
+  
+  if random.randint(0, 1) == 1:
+    left = True
+
+  if random.randint(0, 1) == 1:
+    top = True
+
 
   # quick roid spawn function
   def spawnAsteroid():
     ast = spaceRock(gameWidth, gameHeight)
 
-    # spawn asteroids
+    # spawn asteroids out of view, so they don't just pop in and the player sees it
+    if left:
+      ast.x = random.randint(0 - bound + 1, 0)
+    else:
+      ast.x = random.randint(screenWidth, screenWidth + bound - 1)
+    
+    if top:
+      ast.y = random.randint(0 - bound + 1, 0)
+    else:
+      ast.y = random.randint(screenHeight, screenHeight + bound - 1)
 
     myAsteroids.append(ast)
 
@@ -202,6 +225,7 @@ def asteroidMe():
       # click patty
       if (event.type == p.MOUSEBUTTONUP):
 
+        # make them watch their patties burn after they lose
         if ship.isActive:
           for pat in theGrill.patties:
             x, y = p.mouse.get_pos()
@@ -218,6 +242,7 @@ def asteroidMe():
     if (key[p.K_ESCAPE] == True):
       running = False
 
+    # don't allow camera to move when dead
     if ship.isActive:
 
       if (key[p.K_w] == True):
@@ -290,44 +315,47 @@ def asteroidMe():
       b.moveMe()
 
 
-    # make a gianter asteroid
-    merge = False
-    newAst = None
+    # move asteroids only when ship is alive. Game is "paused" after death
+    if ship.isActive:
 
-    # prevent "can't find x in list.remove(x)" error
-    toRemove0, toRemove1 = False, False
+      # make a gianter asteroid
+      merge = False
+      newAst = None
 
-    for a in myAsteroids:
+      # prevent "can't find x in list.remove(x)" error
+      toRemove0, toRemove1 = False, False
 
-      a.moveMe()
+      for a in myAsteroids:
 
-      # collisions
-      for aa in myAsteroids:
-        if (a != aa):
-          smack, sameCol = a.checkCollisionAst(aa)
-          if ship.coll_mask.overlap(a.coll_mask, (ship.x - a.x, ship.y - a.y)):
-            ship.hit()
+        a.moveMe()
 
-          # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
-          if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
-            newAst = spaceRock(gameWidth, gameHeight, 35, 35)
-            merge = True
-            newAst.x = a.x
-            newAst.y = a.y
-            newAst.color = a.color
+        # collisions
+        for aa in myAsteroids:
+          if (a != aa):
+            smack, sameCol = a.checkCollisionAst(aa)
+            if ship.coll_mask.overlap(a.coll_mask, (ship.x - a.x, ship.y - a.y)):
+              ship.hit()
 
-            toRemove0 = a
-            toRemove1 = aa
+            # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
+            if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
+              newAst = spaceRock(gameWidth, gameHeight, 35, 35)
+              merge = True
+              newAst.x = a.x
+              newAst.y = a.y
+              newAst.color = a.color
 
-          elif smack:
-            a.reverseDir(aa)
-            #aa.reverseDir()
-    
-    if merge:
-      myAsteroids.remove(toRemove0)
-      myAsteroids.remove(toRemove1)
+              toRemove0 = a
+              toRemove1 = aa
 
-      myAsteroids.append(newAst)
+            elif smack:
+              a.reverseDir(aa)
+              #aa.reverseDir()
+      
+      if merge:
+        myAsteroids.remove(toRemove0)
+        myAsteroids.remove(toRemove1)
+
+        myAsteroids.append(newAst)
 
 
 

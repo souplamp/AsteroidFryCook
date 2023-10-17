@@ -71,9 +71,9 @@ class spaceRock():
       ys.append(yScale)
 
     self.minX = min(xs)
-    self.maxX = max(xs)
+    self.maxX = max(xs) / 1.2 # make collision more generous?
     self.minY = min(ys)
-    self.maxY = max(ys)
+    self.maxY = max(ys) / 1.2
 
     index = random.randint(0, nColors - 1)
     self.color = colorPalette[index]
@@ -93,7 +93,7 @@ class spaceRock():
     self.x = self.x + self.xVel
     self.y = self.y + self.yVel
 
-    # If rock is outside of game space wrap it to other side.
+    # If rock is outside of screen space wrap it to other side.
     if (self.x < 0 - bound):
       self.x = self.screenWidth + bound - 1
     elif (self.x > self.screenWidth + bound):
