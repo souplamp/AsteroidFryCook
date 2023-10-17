@@ -125,7 +125,7 @@ class spaceShip:
       dx = ship_pos[0] - mouse_pos[0]
       dy = ship_pos[1] - mouse_pos[1]
 
-      radians = math.atan2(-dy, dx)
+      radians = math.atan2(dy, dx)
       radians %= 2 * math.pi
 
       angle = math.degrees(radians)
