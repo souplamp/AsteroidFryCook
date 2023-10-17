@@ -1,8 +1,1 @@
-
-__pycache__/spaceShip.cpython-311.pyc
-__pycache__/spaceRock.cpython-311.pyc
-__pycache__/animatedSprite.cpython-311.pyc
-__pycache__/grill.cpython-311.pyc
-__pycache__/spaceRock.cpython-311.pyc
-__pycache__/spaceShip.cpython-311.pyc
-__pycache__/timer.cpython-311.pyc
+*.pyc
