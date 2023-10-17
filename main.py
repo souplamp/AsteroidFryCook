@@ -44,13 +44,12 @@ gameMidY = screenHeight / 2
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
 nAsteroids = 20
-maxShootingDelay = 30
+maxShootingDelay = 25
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
 
 # append game objects to this list whenever they're instantiated, used for camera offset function to have the camera work
 entities = []
-
 
 class camera:
     
@@ -85,7 +84,6 @@ class camera:
 
     return incX, incY
   
-
   def moveCam(self, speed, heading):
     radAng = deg2Rad(heading)
 
@@ -119,8 +117,6 @@ class camera:
     else:
       obj.x -= incX
       obj.y -= incY
-
-
 
 def asteroidMe():
   # Initialize pygame.
@@ -253,7 +249,6 @@ def asteroidMe():
         bullets.append(myBullet)
         shotCount = maxShootingDelay
         
-        
     # --- Game logic should go here
     
     # camera function
@@ -262,10 +257,10 @@ def asteroidMe():
     for b in bullets:
       b.moveMe()
 
-
     # make a gianter asteroid
     merge = False
     newAst = None
+    
     # prevent "can't find x in list.remove(x)" error
     toRemove0, toRemove1 = False, False
     for a in myAsteroids:
@@ -330,14 +325,14 @@ def asteroidMe():
     # remove later
     p.draw.rect(screen, RED, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 5)
     
-    font = p.font.SysFont("bebasregular", 26)
+    font = p.font.SysFont("arial", 26)
 
-    left_text = font.render("COOK: " + str(123), True, (255, 255, 255))
+    left_text = font.render("COOK: " + str(ship.cook), True, (255, 255, 255))
     right_text = font.render("FIRE: " + str(ship.ammo), True, (255, 255, 255))
 
     #screen.blit(left_text, (50 - left_text.get_width() // 2, screenHeight / 2 - left_text.get_height() // 2))
-    screen.blit(left_text, (screenWidth - 50 - left_text.get_width() // 2, (screenHeight / 2 - left_text.get_height() // 2) - 15))
-    screen.blit(right_text, (screenWidth - 50 - right_text.get_width() // 2, (screenHeight / 2 - right_text.get_height() // 2) + 15))       
+    screen.blit(left_text, (screenWidth - 75 - left_text.get_width() // 2, (screenHeight / 2 - left_text.get_height() // 2) - 15))
+    screen.blit(right_text, (screenWidth - 75 - right_text.get_width() // 2, (screenHeight / 2 - right_text.get_height() // 2) + 15))       
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)

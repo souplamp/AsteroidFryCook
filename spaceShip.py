@@ -24,6 +24,7 @@ class spaceShip:
       self.shieldCharge = 100
       self.shieldActive = False
       self.ammo = 4   # patties are ammo, ammo is patties
+      self.cook = 0
     
       # This is passed from main
       self.screenWidth = screenWidth
