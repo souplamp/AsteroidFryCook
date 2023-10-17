@@ -261,8 +261,6 @@ def asteroidMe():
     move_upright = move_up and move_right
     move_downright = move_down and move_right
 
-    print(move_upleft)
-
     if (move_up):
       ship.face(270)
     if (move_right):
