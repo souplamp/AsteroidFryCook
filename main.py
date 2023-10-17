@@ -126,6 +126,9 @@ def asteroidMe():
   # Initialize pygame.
   p.init()
 
+  p.mixer.music.load("./Project-26.mp3")
+  p.mixer.music.play()
+
   # Set the width and height of the screen [width, height]
   size = (screenWidth, screenHeight)
   screen = p.display.set_mode(size)
