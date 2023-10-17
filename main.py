@@ -328,7 +328,16 @@ def asteroidMe():
       a.drawMe(screen)
 
     # remove later
-    p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
+    p.draw.rect(screen, RED, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 5)
+    
+    font = p.font.SysFont("bebasregular", 26)
+
+    left_text = font.render("COOK: " + str(123), True, (255, 255, 255))
+    right_text = font.render("FIRE: " + str(ship.ammo), True, (255, 255, 255))
+
+    #screen.blit(left_text, (50 - left_text.get_width() // 2, screenHeight / 2 - left_text.get_height() // 2))
+    screen.blit(left_text, (screenWidth - 50 - left_text.get_width() // 2, (screenHeight / 2 - left_text.get_height() // 2) - 15))
+    screen.blit(right_text, (screenWidth - 50 - right_text.get_width() // 2, (screenHeight / 2 - right_text.get_height() // 2) + 15))       
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)
