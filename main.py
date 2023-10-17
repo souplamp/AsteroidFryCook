@@ -194,7 +194,7 @@ def asteroidMe():
           cookedPatty = pat.checkClick(x, y)
 
           if cookedPatty:
-            ship.addAmmo()
+            ship.addAmmo(1)
           
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
@@ -294,9 +294,7 @@ def asteroidMe():
     if merge:
       myAsteroids.remove(toRemove0)
       myAsteroids.remove(toRemove1)
-
       myAsteroids.append(newAst)
-
 
     # Check to see if a bullet hit an asteroid.
     for a in myAsteroids:
@@ -329,13 +327,11 @@ def asteroidMe():
     for a in myAsteroids:
       a.drawMe(screen)
 
-
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)
-
       
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()

@@ -28,7 +28,6 @@ class spaceShip:
       # This is passed from main
       self.screenWidth = screenWidth
       self.screenHeight = screenHeight
-      
     
       # Find center of rotation.
       xSum = ySum = 0
@@ -118,8 +117,8 @@ class spaceShip:
     
       return
 
-    def addAmmo(self):
-      self.ammo += 1
+    def addAmmo(self, amount=1):
+      self.ammo += amount
 
     # return boolean, used for if statement in main
     # only allow a shot if you have ammo left
