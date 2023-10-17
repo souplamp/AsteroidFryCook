@@ -215,21 +215,18 @@ def asteroidMe():
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_s] == True):
-      #ship.face(90)
       incX, incY = c.moveCam(shipSpeed, 90)
       
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_a] == True):
-      #ship.face(180)
       incX, incY = c.moveCam(shipSpeed, 180)
 
       for e in entities:
         c.offsetObjects(e, incX, incY)
 
     if (key[p.K_d] == True):
-      #ship.face(0)
       incX, incY = c.moveCam(shipSpeed, 0)
 
       for e in entities:
