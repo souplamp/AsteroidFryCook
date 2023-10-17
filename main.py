@@ -180,6 +180,9 @@ def asteroidMe():
 
   # -------- Main Program Loop -----------
   while running:
+
+    print(ship.getangletomouse())
+
     # --- Main event loop
     for event in p.event.get():
       if event.type == p.QUIT:
@@ -201,11 +204,6 @@ def asteroidMe():
           
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
-
-    move_up = key[p.K_w] == True
-    move_left = key[p.K_a] == True
-    move_down = key[p.K_s] == True
-    move_right = key[p.K_d] == True
 
     # Handle keypresses.
     if (key[p.K_ESCAPE] == True):
@@ -259,29 +257,6 @@ def asteroidMe():
         bullets.append(myBullet)
         shotCount = maxShootingDelay
         
-    move_upleft = move_up and move_left
-    move_downleft = move_down and move_left
-    move_upright = move_up and move_right
-    move_downright = move_down and move_right
-
-    if (move_up):
-      ship.face(270)
-    if (move_right):
-      ship.face(0)
-    if (move_down):
-      ship.face(90)
-    if (move_left):
-      ship.face(180)
-    if (move_upright):
-      ship.face(270 + 45)
-    if (move_downright):
-      ship.face(45)
-    if (move_downleft):
-      ship.face(90 + 45)
-    if (move_upleft):
-      ship.face(180 + 45)
-
-        
     # --- Game logic should go here
     
     # camera function
@@ -289,6 +264,8 @@ def asteroidMe():
     # Move bullets and asteroids.
     for b in bullets:
       b.moveMe()
+    
+    ship.face(ship.getangletomouse())
     
     # make a gianter asteroid
     merge = False
