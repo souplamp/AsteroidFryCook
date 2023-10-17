@@ -1,5 +1,6 @@
 import pygame as p
 import math
+from timer import Timer
 from util import deg2Rad, getDist, rotatePoint
 
 BLACK = (0, 0, 0)
@@ -21,11 +22,14 @@ class spaceShip:
       self.screenY = y0
       self.heading = heading0
       self.scaleFactor = scaleFactor0
+      self.isActive = True
+      self.hitTimer = Timer()
 
       self.shieldCharge = 100
       self.shieldActive = False
 
       self.ammo = 4   # patties are ammo, ammo is patties
+      self.lives = 3  # start with 3
     
       # This is passed from main
       self.screenWidth = screenWidth
@@ -52,13 +56,16 @@ class spaceShip:
     
       return
 
+
     def setGunSpot(self, gunSpot):
       self.gunSpot = gunSpot
       return
     
+
     def getGunSpot(self):
       return self.gunX, self.gunY
     
+
     def moveMe(self, inc):
       # Move ship along current course.
       radAng = deg2Rad(self.heading)
@@ -77,48 +84,63 @@ class spaceShip:
     
       return
     
+
     def drawMe(self, screen, color, myShip):
       points = []
       isTheGunSpot = False
-      for myPoint in myShip:
-        if (myPoint == self.gunSpot):
-          isTheGunSpot = True
-    
-        # Get coords of point.
-        x0 = float(myPoint[0])
-        y0 = float(myPoint[1])
-    
-        # Rotate the point.
-        myRadius = getDist(self.xc, self.yc, x0, y0)
-        theta = math.atan2(y0 - self.yc, x0 - self.xc)
-        radAng = deg2Rad(self.heading)
-        xr = self.xc + myRadius * math.cos(radAng + theta)
-        yr = self.yc + myRadius * math.sin(radAng + theta)
-    
-        # Scale.
-        xs = xr * self.scaleFactor
-        ys = yr * self.scaleFactor
-    
-        # Translate.
-        xt = xs + self.x
-        yt = ys + self.y
-    
-        # Save gun position.
-        if (isTheGunSpot is True):
-          self.gunX = xt
-          self.gunY = yt
-          isTheGunSpot = False
-    
-        # Put point into polygon point list.
-        points.append([xt, yt])
-    
-      p.draw.polygon(screen, color, points, width=2)
 
-      # for debug
-      #screen.blit(self.mask_image,(self.x - 12, self.y - 28))
+      if self.isActive:
+
+        if self.hitTimer.get() % 10 == 0:
+          color = WHITE
+
+        for myPoint in myShip:
+          if (myPoint == self.gunSpot):
+            isTheGunSpot = True
+      
+          # Get coords of point.
+          x0 = float(myPoint[0])
+          y0 = float(myPoint[1])
+      
+          # Rotate the point.
+          myRadius = getDist(self.xc, self.yc, x0, y0)
+          theta = math.atan2(y0 - self.yc, x0 - self.xc)
+          radAng = deg2Rad(self.heading)
+          xr = self.xc + myRadius * math.cos(radAng + theta)
+          yr = self.yc + myRadius * math.sin(radAng + theta)
+      
+          # Scale.
+          xs = xr * self.scaleFactor
+          ys = yr * self.scaleFactor
+      
+          # Translate.
+          xt = xs + self.x
+          yt = ys + self.y
+      
+          # Save gun position.
+          if (isTheGunSpot is True):
+            self.gunX = xt
+            self.gunY = yt
+            isTheGunSpot = False
+      
+          # Put point into polygon point list.
+          points.append([xt, yt])
+      
+        p.draw.polygon(screen, color, points, width=2)
+
+        # for debug
+        #screen.blit(self.mask_image,(self.x - 12, self.y - 28))
       
       return
     
+
+    def checkCollision(self, object):
+
+      collide = self.coll_mask.overlap(object.coll_mask, (self.x - object.x, self.y - object.y))
+
+      return collide
+    
+
     def turn(self, inc):
       self.heading = self.heading + inc
     
@@ -129,8 +151,10 @@ class spaceShip:
     
       return
 
+
     def addAmmo(self):
       self.ammo += 1
+
 
     # return boolean, used for if statement in main
     # only allow a shot if you have ammo left
@@ -141,3 +165,18 @@ class spaceShip:
         self.ammo -= 1
 
       return ammoLeft
+    
+
+    def hit(self):
+      if self.hitTimer.get() < 0:
+        self.hitTimer.set(270)
+
+        if self.lives > 0:
+          self.lives -= 1
+
+          if self.lives == 0:
+            self.isActive = False
+
+
+    def tick(self):
+      self.hitTimer.tick()

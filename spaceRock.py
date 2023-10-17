@@ -79,6 +79,7 @@ class spaceRock():
     self.color = colorPalette[index]
 
     self.rect = p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY)
+
     self.coll_mask = p.mask.Mask((self.rect.width, self.rect.height))  # for collision
     self.coll_mask.fill()
     self.mask_image = self.coll_mask.to_surface()
@@ -160,6 +161,7 @@ class spaceRock():
 
     return
 
+
   # for asteroids
   def checkCollisionAst(self, asteroid):
     color = asteroid.color
@@ -167,20 +169,22 @@ class spaceRock():
     smack = False
     sameCol = False
 
-    # use pygame's rect collision check
-    rect_check = self.rect.colliderect(asteroid.rect)
+    # use pygame's collision check method for masks
+    #rect_check = self.rect.colliderect(asteroid.rect)
+    coll_check = self.coll_mask.overlap(asteroid.coll_mask, (self.x - asteroid.x, self.y - asteroid.y))
 
-    if rect_check and (not self.didBounce):
+    if coll_check and (not self.didBounce):
       smack = True
       self.didBounce = True
       
       if self.color == color:
         sameCol = True
     
-    elif (not rect_check) and (self.didBounce):
+    elif (not coll_check) and (self.didBounce):
       self.didBounce = False
 
     return smack, sameCol
+
 
   # for bullets
   def checkCollision(self, x, y):
@@ -192,6 +196,7 @@ class spaceRock():
       smack = True
 
     return smack
+  
   
   def reverseDir(self, asteroid):
     ang = math.atan2(asteroid.y - self.y, asteroid.x - self.x)

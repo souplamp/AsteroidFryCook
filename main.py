@@ -126,6 +126,8 @@ def asteroidMe():
   # Initialize pygame.
   p.init()
 
+  font = p.font.SysFont("Agency FB", 30, True)
+
   # Set the width and height of the screen [width, height]
   size = (screenWidth, screenHeight)
   screen = p.display.set_mode(size)
@@ -165,8 +167,15 @@ def asteroidMe():
   # Make some asteroids - that is space rocks.
   myAsteroids = []
 
+
+  # quick roid spawn function
   def spawnAsteroid():
-    myAsteroids.append(spaceRock(gameWidth, gameHeight))
+    ast = spaceRock(gameWidth, gameHeight)
+
+    # spawn asteroids
+
+    myAsteroids.append(ast)
+
 
   for j in range(nAsteroids):
     spawnAsteroid()
@@ -175,8 +184,11 @@ def asteroidMe():
   tickTock = 0
   p.time.set_timer(1, 3000) # spawn rocks every x seconds, don't go over len nAsteroids
 
+
+
   # -------- Main Program Loop -----------
   while running:
+
     # --- Main event loop
     for event in p.event.get():
       if event.type == p.QUIT:
@@ -189,13 +201,16 @@ def asteroidMe():
       
       # click patty
       if (event.type == p.MOUSEBUTTONUP):
-        for pat in theGrill.patties:
-          x, y = p.mouse.get_pos()
-          cookedPatty = pat.checkClick(x, y)
 
-          if cookedPatty:
-            ship.addAmmo()
+        if ship.isActive:
+          for pat in theGrill.patties:
+            x, y = p.mouse.get_pos()
+            cookedPatty = pat.checkClick(x, y)
+
+            if cookedPatty:
+              ship.addAmmo()
           
+
     """ Check for keyboard presses. """
     key = p.key.get_pressed()
 
@@ -203,56 +218,68 @@ def asteroidMe():
     if (key[p.K_ESCAPE] == True):
       running = False
 
-    if (key[p.K_w] == True):
-      #ship.moveMe(shipSpeed)
-      incX, incY = c.moveCam(shipSpeed, 270)
+    if ship.isActive:
 
-      for e in entities:
-        c.offsetObjects(e, incX, incY)
+      if (key[p.K_w] == True):
+        #ship.moveMe(shipSpeed)
+        incX, incY = c.moveCam(shipSpeed, 270)
 
-    if (key[p.K_s] == True):
-      #ship.moveMe(-1 * shipSpeed)
-      incX, incY = c.moveCam(shipSpeed, 90)
-      
-      for e in entities:
-        c.offsetObjects(e, incX, incY)
-    if (key[p.K_a] == True):
-      # ship.moveMe(shipSpeed)
-      incX, incY = c.moveCam(shipSpeed, 180)
+        for e in entities:
+          c.offsetObjects(e, incX, incY)
 
-      for e in entities:
-        c.offsetObjects(e, incX, incY)
 
-    if (key[p.K_d] == True):
-      # ship.moveMe(-1 * shipSpeed)
-      incX, incY = c.moveCam(shipSpeed, 0)
-
-      for e in entities:
-        c.offsetObjects(e, incX, incY)
-    if (key[p.K_q] == True):
-      ship.turn(-3)
-
-    if (key[p.K_e] == True):
-      ship.turn(3)
-
-    if (key[p.K_LSHIFT] == True):
-
-      if ship.shieldActive == False and act_count>9:
-        ship.shieldActive = True
-        act_count = 0
-        print("Shield is Active(WIP)")
-      if ship.shieldActive == True and act_count>9:
-        ship.shieldActive = False
-        act_count = 0
-        print("Shield is No Longer Active")
-
-    if (key[p.K_SPACE] == True):
-      if (shotCount == 0) and (ship.shoot()):
-        gunX, gunY = ship.getGunSpot()
-        myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed, gameWidth, gameHeight)
-        bullets.append(myBullet)
-        shotCount = maxShootingDelay
+      if (key[p.K_s] == True):
+        #ship.moveMe(-1 * shipSpeed)
+        incX, incY = c.moveCam(shipSpeed, 90)
         
+        for e in entities:
+          c.offsetObjects(e, incX, incY)
+
+
+      if (key[p.K_a] == True):
+        # ship.moveMe(shipSpeed)
+        incX, incY = c.moveCam(shipSpeed, 180)
+
+        for e in entities:
+          c.offsetObjects(e, incX, incY)
+
+
+      if (key[p.K_d] == True):
+        # ship.moveMe(-1 * shipSpeed)
+        incX, incY = c.moveCam(shipSpeed, 0)
+
+        for e in entities:
+          c.offsetObjects(e, incX, incY)
+
+
+      if (key[p.K_q] == True):
+        ship.turn(-3)
+
+
+      if (key[p.K_e] == True):
+        ship.turn(3)
+
+
+      if (key[p.K_LSHIFT] == True):
+
+        if ship.shieldActive == False and act_count>9:
+          ship.shieldActive = True
+          act_count = 0
+          print("Shield is Active(WIP)")
+        if ship.shieldActive == True and act_count>9:
+          ship.shieldActive = False
+          act_count = 0
+          print("Shield is No Longer Active")
+
+
+      if (key[p.K_SPACE] == True):
+        if (shotCount == 0) and (ship.shoot()):
+          gunX, gunY = ship.getGunSpot()
+          myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed, gameWidth, gameHeight)
+          bullets.append(myBullet)
+          shotCount = maxShootingDelay
+        
+
         
     # --- Game logic should go here
     
@@ -266,9 +293,12 @@ def asteroidMe():
     # make a gianter asteroid
     merge = False
     newAst = None
+
     # prevent "can't find x in list.remove(x)" error
     toRemove0, toRemove1 = False, False
+
     for a in myAsteroids:
+
       a.moveMe()
 
       # collisions
@@ -276,7 +306,7 @@ def asteroidMe():
         if (a != aa):
           smack, sameCol = a.checkCollisionAst(aa)
           if ship.coll_mask.overlap(a.coll_mask, (ship.x - a.x, ship.y - a.y)):
-            print("ast hit!")
+            ship.hit()
 
           # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
           if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
@@ -300,14 +330,18 @@ def asteroidMe():
       myAsteroids.append(newAst)
 
 
+
     # Check to see if a bullet hit an asteroid.
     for a in myAsteroids:
       for b in bullets:
+
         if (a.isActive and b.isActive):
           smacked = a.checkCollision(b.x, b.y)
+
           if (smacked == True):
             b.setExplosion()
             a.isActive = False
+            if not b.isActive: bullets.remove(b)
             myAsteroids.remove(a)
 
     # --- Screen-clearing code goes here
@@ -335,6 +369,16 @@ def asteroidMe():
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
+    # UI text
+    txt = "Ammo: " + str(ship.ammo)
+    ammotxt = font.render(txt, True, (255,255,255))
+    txt = "Lives: " + str(ship.lives)
+    livestxt = font.render(txt, True, (255,255,255))
+
+    screen.blit(ammotxt, (20, screenHeight - 40))
+    screen.blit(livestxt, (20, screenHeight - 80))
+
+
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)
 
@@ -345,6 +389,7 @@ def asteroidMe():
     # --- Limit to 60 frames per second. Tick game object timers here
     clock.tick(60)
     theGrill.tick()
+    ship.tick()
 
     # Update frame count.
     tickTock = tickTock + 1
