@@ -286,8 +286,7 @@ def asteroidMe():
     # Move bullets and asteroids.
     for b in bullets:
       b.moveMe()
-
-
+    
     # make a gianter asteroid
     merge = False
     newAst = None
@@ -361,6 +360,14 @@ def asteroidMe():
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)
 
+
+    font = p.font.SysFont("bebasregular", 26)
+
+    ammo_text = font.render("AMMO: " + str(ship.ammo), True, (255, 255, 255))
+    uncook_text = font.render("UNCOOKED: " + str(0), True, (255, 255, 255))
+
+    screen.blit(ammo_text, (screenWidth - 75 - ammo_text.get_width() // 2, (screenHeight / 2 - ammo_text.get_height() // 2) + 15))
+    screen.blit(uncook_text, (screenWidth - 75 - uncook_text.get_width() // 2, (screenHeight / 2 - uncook_text.get_height() // 2) - 15))
       
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()
