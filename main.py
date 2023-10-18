@@ -128,7 +128,9 @@ def asteroidMe():
   # Initialize pygame.
   p.init()
 
-  font = p.font.SysFont("Agency FB", 32, True)
+  p.mixer.music.load("./funnyspacegame.ogg")
+  p.mixer.music.play(-1)
+  font = p.font.SysFont("bebasregular", 32, True)
   beegfont = p.font.SysFont("Agency FB", 64, True)
 
   # Set the width and height of the screen [width, height]
@@ -267,23 +269,18 @@ def asteroidMe():
     if ship.isActive:
 
       if (key[p.K_w] == True):
-        #ship.moveMe(shipSpeed)
         incX, incY = c.moveCam(shipSpeed, 270)
 
         for e in entities:
           c.offsetObjects(e, incX, incY)
 
-
       if (key[p.K_s] == True):
-        #ship.moveMe(-1 * shipSpeed)
         incX, incY = c.moveCam(shipSpeed, 90)
         
         for e in entities:
           c.offsetObjects(e, incX, incY)
 
-
       if (key[p.K_a] == True):
-        # ship.moveMe(shipSpeed)
         incX, incY = c.moveCam(shipSpeed, 180)
 
         for e in entities:
@@ -324,6 +321,11 @@ def asteroidMe():
           myBullet = bullet(gunX, gunY, ship.heading, bulletSize, bulletSpeed, gameWidth, gameHeight)
           bullets.append(myBullet)
           shotCount = maxShootingDelay
+
+
+    # stop music when dead
+    if ship.isActive and p.mixer.music.get_busy():
+      p.mixer.music.stop()
         
 
         
@@ -439,7 +441,6 @@ def asteroidMe():
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
     theGrill.drawMe(screen)
-
       
     # --- Go ahead and update the screen with what we've drawn.
     p.display.flip()

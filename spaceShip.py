@@ -149,13 +149,30 @@ class spaceShip:
     def turn(self, inc):
       self.heading = self.heading + inc
     
+
+    def face(self, inc):
+      self.heading = inc
+
       if (self.heading > 359):
-        self.heading = 0
+        self.heading -= 360
       elif (self.heading < 0):
-        self.heading = 359
-    
+        self.heading += 360
+      
       return
 
+    def getangletomouse(self):
+      mouse_pos = p.mouse.get_pos()
+      ship_pos = (self.x, self.y)
+
+      dx = ship_pos[0] - mouse_pos[0]
+      dy = ship_pos[1] - mouse_pos[1]
+
+      radians = math.atan2(dy, dx)
+      radians %= 2 * math.pi
+
+      angle = math.degrees(radians) + 180
+
+      return angle
 
     def addAmmo(self):
       self.ammo += 1
