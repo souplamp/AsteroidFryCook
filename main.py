@@ -9,6 +9,7 @@ modified by Brady, Robert, and Cam
 import pygame as p
 import random
 import math
+import os
 from util import deg2Rad, getDist, rotatePoint
 
 # import game objects
@@ -32,8 +33,8 @@ colorPalette = [WHITE, GREEN, RED, ORANGE, YELLOW, CYAN, MAGENTA]
 nColors = len(colorPalette)
 
 # screen dimensions, for camera
-screenWidth = 1180
-screenHeight = 620
+screenWidth = 1480
+screenHeight = 920
 
 # game dimensions, for game world
 gameWidth = 2000
@@ -44,7 +45,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
-nAsteroids = 20
+nAsteroids = 10
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -127,7 +128,8 @@ def asteroidMe():
   # Initialize pygame.
   p.init()
 
-  font = p.font.SysFont("Agency FB", 30, True)
+  font = p.font.SysFont("Agency FB", 32, True)
+  beegfont = p.font.SysFont("Agency FB", 64, True)
 
   # Set the width and height of the screen [width, height]
   size = (screenWidth, screenHeight)
@@ -150,9 +152,6 @@ def asteroidMe():
   # the grill
   theGrill = grill(460, 240, screenWidth, screenHeight)
 
-  # animation(s)
-  explosionImg = []
-
   # Set up some game objects.
   # Space ship stuff.
   initialHeading = 90
@@ -160,6 +159,15 @@ def asteroidMe():
   ship = spaceShip(gameMidX, gameMidY, initialHeading, scaleFactor, basicShip, gameWidth, gameHeight)
   shipSpeed = 5
   ship.setGunSpot([6, 0])
+
+  # animation(s)
+  explosionImg = []
+  for filename in os.listdir("./sprites/explosion"):
+    filename = "./sprites/explosion/" + filename
+    explosionImg.append(p.image.load(filename))
+
+  explosionAnim = animatedSprite(ship.x - 16, ship.y - 32, explosionImg, 2)
+  explosionAnim.set_speed(0.1)
 
   # Bullet stuff
   bullets = []
@@ -182,20 +190,33 @@ def asteroidMe():
     top = True
 
 
+  # return x, y coords out of camera view
+  def getOutofView():
+
+    x, y = 0, 0
+
+    # spawn asteroids out of view, so they don't just pop in and the player sees it
+    if left:
+      x = random.randint(0 - bound + 1, 0)
+    else:
+      x = random.randint(screenWidth, screenWidth + bound - 1)
+    
+    if top:
+      y = random.randint(0 - bound + 1, 0)
+    else:
+      y = random.randint(screenHeight, screenHeight + bound - 1)
+
+    return x, y
+
   # quick roid spawn function
   def spawnAsteroid():
     ast = spaceRock(gameWidth, gameHeight)
 
     # spawn asteroids out of view, so they don't just pop in and the player sees it
-    if left:
-      ast.x = random.randint(0 - bound + 1, 0)
-    else:
-      ast.x = random.randint(screenWidth, screenWidth + bound - 1)
-    
-    if top:
-      ast.y = random.randint(0 - bound + 1, 0)
-    else:
-      ast.y = random.randint(screenHeight, screenHeight + bound - 1)
+    x, y = getOutofView()
+
+    ast.x = x
+    ast.y = y
 
     myAsteroids.append(ast)
 
@@ -205,7 +226,7 @@ def asteroidMe():
 
   # Clock/game frame things.
   tickTock = 0
-  p.time.set_timer(1, 3000) # spawn rocks every x seconds, don't go over len nAsteroids
+  p.time.set_timer(1, 2000) # spawn rocks every x seconds, don't go over len nAsteroids
 
 
 
@@ -332,9 +353,13 @@ def asteroidMe():
         # collisions
         for aa in myAsteroids:
           if (a != aa):
+
             smack, sameCol = a.checkCollisionAst(aa)
-            if ship.coll_mask.overlap(a.coll_mask, (ship.x - a.x, ship.y - a.y)):
+            if ship.collRect.colliderect(a.rect):
               ship.hit()
+
+            if ship.gravRect.colliderect(a.rect):
+              a.gravPull(ship)
 
             # only "merge" rocks if their scales are smallish. Make a bigger rock when they merge
             if sameCol and (a.scaleFactorX < 25 or a.scaleFactorY < 25) and (aa.scaleFactorX < 25 or aa.scaleFactorY < 25):
@@ -382,8 +407,6 @@ def asteroidMe():
     screen.fill(BLACK)
 
     # --- Drawing code should go here
-    # Spaceship
-    ship.drawMe(screen, ORANGE, basicShip)
 
     # Bullets
     for b in bullets:
@@ -393,6 +416,13 @@ def asteroidMe():
     for a in myAsteroids:
       a.drawMe(screen)
 
+    # Spaceship
+    ship.drawMe(screen, ORANGE, basicShip)
+      # game over
+    if not ship.isActive:
+      explosionAnim.play(screen)
+      screen.blit(beegfont.render("Game Over", True, (255,255,255)), ((screenWidth / 2) - 116, (screenHeight / 2) - 128))
+
 
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
@@ -400,11 +430,11 @@ def asteroidMe():
     # UI text
     txt = "Ammo: " + str(ship.ammo)
     ammotxt = font.render(txt, True, (255,255,255))
-    txt = "Lives: " + str(ship.lives)
+    txt = "Hits: " + str(ship.lives)
     livestxt = font.render(txt, True, (255,255,255))
 
-    screen.blit(ammotxt, (20, screenHeight - 40))
-    screen.blit(livestxt, (20, screenHeight - 80))
+    screen.blit(ammotxt, (20, screenHeight - 60))
+    screen.blit(livestxt, (20, screenHeight - 110))
 
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything

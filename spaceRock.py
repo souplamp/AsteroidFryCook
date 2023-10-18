@@ -80,10 +80,6 @@ class spaceRock():
 
     self.rect = p.Rect(self.x - self.maxX, self.y - self.maxY, 2 * self.maxX, 2 * self.maxY)
 
-    self.coll_mask = p.mask.Mask((self.rect.width, self.rect.height))  # for collision
-    self.coll_mask.fill()
-    self.mask_image = self.coll_mask.to_surface()
-
     self.isActive = True
   
 
@@ -156,7 +152,7 @@ class spaceRock():
     p.draw.polygon(screen, self.color, points, width=2)
 
     # debug check collision shape
-    #p.draw.rect(screen, GREEN, self.rect, width=3)
+    p.draw.rect(screen, GREEN, self.rect, width=3)
     #screen.blit(self.mask_image, (self.rect.x, self.rect.y))
 
     return
@@ -171,7 +167,7 @@ class spaceRock():
 
     # use pygame's collision check method for masks
     #rect_check = self.rect.colliderect(asteroid.rect)
-    coll_check = self.coll_mask.overlap(asteroid.coll_mask, (self.x - asteroid.x, self.y - asteroid.y))
+    coll_check = self.rect.colliderect(asteroid.rect)
 
     if coll_check and (not self.didBounce):
       smack = True
@@ -207,6 +203,10 @@ class spaceRock():
 
     self.xVel = -newXVel * speed
     self.yVel = -newYVel * speed
+
+
+  def gravPull(self, ship):
+    pass
 
 
   def tick(self):

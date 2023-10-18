@@ -82,8 +82,8 @@ class patty(p.sprite.Sprite):
         # place patty on grill
         if self.state == 0:
             self.state = 1
-            self.cookTimer.set(360)
-            self.burnTimer.set(720)
+            self.cookTimer.set(720)
+            self.burnTimer.set(1080)
 
         # remove cooked patty from grill
         elif self.state == 3:
@@ -105,8 +105,8 @@ class patty(p.sprite.Sprite):
             if self.state < 3:
                 self.state += 1
                 self.readyToFlip = False
-                self.cookTimer.set(360)
-                self.burnTimer.set(720)
+                self.cookTimer.set(720)
+                self.burnTimer.set(1080)
         
         return returnPatty
 

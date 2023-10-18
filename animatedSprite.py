@@ -4,13 +4,25 @@ framerate = 60
 
 class animatedSprite(p.sprite.Sprite):
 
-    def __init__(self, x, y, images):
+    def __init__(self, x, y, images, scale=1):
         super().__init__()
 
         self.images = images
-        self.rect = p.Rect(x, y, images[0].get_width(), images[0].get_height())
 
-        self.animSpeed = 0
+        self.width = images[0].get_width()
+        self.height = images[0].get_height()
+        
+        # scale images in for loop
+        ind = 0
+        for i in self.images:
+            i = p.transform.scale(i, (i.get_width() * scale, i.get_height() * scale))
+            self.images[ind] = i
+
+            ind += 1
+
+        self.rect = p.Rect(x, y, self.width, self.height)
+
+        self.animSpeed = 0.1
         self.frames = len(images)
         self.currFrame = 0
 
