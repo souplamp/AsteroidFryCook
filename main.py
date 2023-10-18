@@ -18,6 +18,7 @@ from spaceRock import spaceRock
 from spaceShip import spaceShip
 from grill import grill
 from animatedSprite import animatedSprite
+from customer import customer
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -38,7 +39,7 @@ screenHeight = 920
 
 # game dimensions, for game world
 gameWidth = 2000
-gameHeight = 1400
+gameHeight = 2000
 
 gameMidX = screenWidth / 2
 gameMidY = screenHeight / 2
@@ -230,7 +231,11 @@ def asteroidMe():
   # Clock/game frame things.
   tickTock = 0
   p.time.set_timer(1, 2000) # spawn rocks every x seconds, don't go over len nAsteroids
+  p.time.set_timer(2, 1000) # spawn new customer if one doesn't exist
 
+  score = 0
+
+  aliem = None
 
 
   # -------- Main Program Loop -----------
@@ -245,6 +250,14 @@ def asteroidMe():
       if (event.type == 1):
         if len(myAsteroids) < nAsteroids:
           spawnAsteroid()
+      
+      # spawn customers
+      if (event.type == 2):
+        if aliem == None:
+          aliem = customer(random.randint(0, gameWidth), random.randint(0, gameHeight))
+      
+        elif aliem.satiated and ((aliem.x < (0 - aliem.rect.width) or aliem.x > screenWidth + aliem.rect.width) or (aliem.y < 0 - aliem.rect.height or aliem.y > screenHeight + aliem.rect.height)):
+          aliem = customer(random.randint(0, gameWidth), random.randint(0, gameHeight))
       
       # click patty
       if (event.type == p.MOUSEBUTTONUP):
@@ -386,6 +399,14 @@ def asteroidMe():
         myAsteroids.remove(toRemove1)
 
         myAsteroids.append(newAst)
+      
+
+      # customer collision 
+      if aliem != None:
+        serve = aliem.checkCollision(ship)
+
+        if serve and aliem.satiated:
+          score += 100
 
 
 
@@ -401,6 +422,7 @@ def asteroidMe():
             a.isActive = False
             if not b.isActive: bullets.remove(b)
             myAsteroids.remove(a)
+            score += 5
 
     # --- Screen-clearing code goes here
 
@@ -428,18 +450,23 @@ def asteroidMe():
       explosionAnim.play(screen)
       screen.blit(beegfont.render("Game Over", True, (255,255,255)), ((screenWidth / 2) - 116, (screenHeight / 2) - 128))
 
+    if aliem != None:
+      aliem.drawMe(screen)
 
     # remove later
     p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
     # UI text
-    txt = "Ammo: " + str(ship.ammo)
+    txt = "Patties: " + str(ship.ammo)
     ammotxt = font.render(txt, True, (255,255,255))
     txt = "Hits: " + str(ship.lives)
     livestxt = font.render(txt, True, (255,255,255))
+    txt = "Score: " + str(score)
+    scoretxt = font.render(txt, True, (255,255,255))
 
     screen.blit(ammotxt, (20, screenHeight - 60))
     screen.blit(livestxt, (20, screenHeight - 110))
+    screen.blit(scoretxt, (20, screenHeight - 160))
 
 
     # it's a sort of mini-display for the corner, so it should be drawn last on top of everything
@@ -469,6 +496,7 @@ def asteroidMe():
     # entities.append(ship)
     entities.append(myAsteroids)
     entities.append(bullets)
+    if aliem != None: entities.append(aliem)
 
   # Close the window and quit.
   p.quit()
