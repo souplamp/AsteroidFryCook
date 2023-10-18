@@ -324,7 +324,7 @@ def asteroidMe():
 
 
     # stop music when dead
-    if ship.isActive and p.mixer.music.get_busy():
+    if not ship.isActive and p.mixer.music.get_busy():
       p.mixer.music.stop()
         
 
