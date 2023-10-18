@@ -39,7 +39,7 @@ class customer():
         
         screen.blit(self.images[i], (self.rect.x, self.rect.y))
 
-        p.draw.rect(screen, (0, 255, 0), self.rect, 2)
+        #p.draw.rect(screen, (0, 255, 0), self.rect, 2)
 
 
     def checkCollision(self, ship):
