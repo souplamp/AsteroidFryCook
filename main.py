@@ -45,7 +45,7 @@ gameMidY = screenHeight / 2
 
 # General constants and variables defined.
 # Keep asteroid count low, they won't exist too far outside the camera
-nAsteroids = 10
+nAsteroids = 40
 maxShootingDelay = 30
 
 basicShip = [[3, 0], [0, 3], [6, 0], [0, -3], [3, 0]]
@@ -130,7 +130,8 @@ def asteroidMe():
 
   p.mixer.music.load("./funnyspacegame.ogg")
   p.mixer.music.play(-1)
-  font = p.font.SysFont("bebasregular", 32, True)
+  p.mixer.music.set_volume(0.1)
+  font = p.font.SysFont("bebasregular", 48, True)
   beegfont = p.font.SysFont("Agency FB", 64, True)
 
   # Set the width and height of the screen [width, height]
@@ -340,6 +341,8 @@ def asteroidMe():
 
     # move asteroids only when ship is alive. Game is "paused" after death
     if ship.isActive:
+
+      ship.face(ship.getangletomouse())
 
       # make a gianter asteroid
       merge = False

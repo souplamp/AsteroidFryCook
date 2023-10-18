@@ -39,7 +39,7 @@ class spaceShip:
       self.collRect = p.rect.Rect(self.x - 4, self.y - 16, 36, 36)
 
       # Field for gravity
-      self.gravRect = p.rect.Rect(self.x - 118, self.y - 120, 256, 256)
+      self.gravRect = p.rect.Rect(self.x - 240, self.y - 240, 512, 512)
     
       # Find center of rotation.
       xSum = ySum = 0
@@ -134,7 +134,7 @@ class spaceShip:
 
         # for debug
         #p.draw.rect(screen, GREEN, self.collRect, 2)
-        p.draw.rect(screen, GREEN, self.gravRect, 2)
+        #p.draw.rect(screen, GREEN, self.gravRect, 2)
       
       return
     

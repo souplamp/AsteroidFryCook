@@ -85,6 +85,19 @@ class spaceRock():
 
   def moveMe(self):
 
+    # limit speed
+    limit = 3
+
+    if self.xVel > limit:
+      self.xVel = limit
+    if self.xVel < -limit:
+      self.xVel = -limit
+
+    if self.yVel > limit:
+      self.yVel = limit
+    if self.yVel < -limit:
+      self.yVel = -limit
+
     # Calculate new positon of space rock based on it's velocity.
     self.x = self.x + self.xVel
     self.y = self.y + self.yVel
@@ -152,7 +165,7 @@ class spaceRock():
     p.draw.polygon(screen, self.color, points, width=2)
 
     # debug check collision shape
-    p.draw.rect(screen, GREEN, self.rect, width=3)
+    #p.draw.rect(screen, GREEN, self.rect, width=3)
     #screen.blit(self.mask_image, (self.rect.x, self.rect.y))
 
     return
@@ -206,7 +219,16 @@ class spaceRock():
 
 
   def gravPull(self, ship):
-    pass
+    ang = math.atan2(ship.y - self.y, ship.x - self.x)
+
+    # integers make it go WHACK, need to use small force
+    force = 0.001
+
+    xVelInc = math.cos(ang) * force
+    yVelInc = math.sin(ang) * force
+
+    self.xVel += xVelInc
+    self.yVel += yVelInc
 
 
   def tick(self):
