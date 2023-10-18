@@ -126,7 +126,7 @@ def asteroidMe():
   # Initialize pygame.
   p.init()
 
-  p.mixer.music.load("./Project-26.mp3")
+  p.mixer.music.load("./funnyspacegame.ogg")
   p.mixer.music.play()
 
   # Set the width and height of the screen [width, height]
@@ -180,8 +180,6 @@ def asteroidMe():
 
   # -------- Main Program Loop -----------
   while running:
-
-    print(ship.getangletomouse())
 
     # --- Main event loop
     for event in p.event.get():
