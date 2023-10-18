@@ -187,10 +187,10 @@ def asteroidMe():
   left, top = False, False
   bound = 512
   
-  if random.randint(0, 1) == 1:
+  if random.randint(0, 2) == 1:
     left = True
 
-  if random.randint(0, 1) == 1:
+  if random.randint(0, 2) == 1:
     top = True
 
 
@@ -235,7 +235,7 @@ def asteroidMe():
 
   score = 0
 
-  aliem = None
+  aliem = customer(random.randint(0, gameWidth), random.randint(0, gameHeight), gameWidth, gameHeight)
 
 
   # -------- Main Program Loop -----------
@@ -253,11 +253,9 @@ def asteroidMe():
       
       # spawn customers
       if (event.type == 2):
-        if aliem == None:
+        if aliem.satiated and ((aliem.x < (0 - aliem.rect.width) or aliem.x > screenWidth + aliem.rect.width) or (aliem.y < 0 - aliem.rect.height or aliem.y > screenHeight + aliem.rect.height)):
           aliem = customer(random.randint(0, gameWidth), random.randint(0, gameHeight))
-      
-        elif aliem.satiated and ((aliem.x < (0 - aliem.rect.width) or aliem.x > screenWidth + aliem.rect.width) or (aliem.y < 0 - aliem.rect.height or aliem.y > screenHeight + aliem.rect.height)):
-          aliem = customer(random.randint(0, gameWidth), random.randint(0, gameHeight))
+        print(aliem.x, aliem.y)
       
       # click patty
       if (event.type == p.MOUSEBUTTONUP):
@@ -454,7 +452,7 @@ def asteroidMe():
       aliem.drawMe(screen)
 
     # remove later
-    p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
+    #p.draw.rect(screen, GREEN, p.Rect(0 - c.topLeftX, 0 - c.topLeftY, gameWidth, gameHeight), width = 2)
 
     # UI text
     txt = "Patties: " + str(ship.ammo)

@@ -4,10 +4,12 @@ import random
 
 class customer():
 
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0, y=0, gameWidth=2000, gameHeight=2000):
 
         self.x = x
         self.y = y
+        self.gameWidth = gameWidth
+        self.gameHeight = gameHeight
 
         self.satiated = False
 
@@ -38,6 +40,17 @@ class customer():
             i += 1
         
         screen.blit(self.images[i], (self.rect.x, self.rect.y))
+
+        # make sure customer doesn't leave bounds
+        if (self.x < 0 - self.images[0].get_width()):
+            self.x = self.gameWidth
+        elif (self.x > self.gameWidth):
+            self.x = 0
+
+        if (self.y < 0 - self.images[0].get_height()):
+            self.y = self.gameHeight
+        elif (self.y > self.gameHeight):
+            self.y = 0
 
         #p.draw.rect(screen, (0, 255, 0), self.rect, 2)
 
