@@ -181,8 +181,6 @@ def asteroidMe():
   # -------- Main Program Loop -----------
   while running:
 
-    print(ship.getangletomouse())
-
     # --- Main event loop
     for event in p.event.get():
       if event.type == p.QUIT:
